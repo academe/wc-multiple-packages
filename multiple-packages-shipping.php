@@ -5,7 +5,7 @@ Plugin URI: http://www.bolderelements.net/multiple-packages-woocommerce/
 Description: A simple UI to take advatage of multiple shipping packages without PHP knowledge
 Author: Erica Dion
 Author URI: http://www.bolderelements.net/
-Version: 1.0
+Version: 1.1
 
 	Copyright: © 2014 Bolder Elements (email : erica@bolderelements.net)
 	License: GPLv2 or later
@@ -45,7 +45,7 @@ function woocommerce_multiple_packaging_init() {
 				 * @access public
 				 * @return void
 				 */
-				function generate_packages( $packages ) {
+				public static function generate_packages( $packages ) {
 					if( get_option( 'multi_packages_enabled' ) ) {
 						// Reset the packages
 	    				$packages = array();
