@@ -25,7 +25,11 @@ function woocommerce_multiple_packaging_init() {
 
             // Include Necessary files
             require_once('class-settings.php');
+
             add_filter( 'woocommerce_cart_shipping_packages', array( 'BE_Multiple_Packages', 'generate_packages' ) );
+
+            // Allows plugins to add order item meta to shipping
+            add_action( 'woocommerce_add_shipping_order_item', array( 'BE_Multiple_Packages', 'link_shipping_line_item' ), 10, 3 );
 
             class BE_Multiple_Packages {
 
@@ -36,6 +40,54 @@ function woocommerce_multiple_packaging_init() {
                     $settings_class = new BE_Multiple_Packages_Settings();
                     $settings_class->get_package_restrictions();
                     $this->package_restrictions = $settings_class->package_restrictions;
+                }
+
+                /**
+                 * For each package, find the order lines that contain the products that
+                 * are included in that package, and link those order lines to this
+                 * shipping line.
+                 * The assumption is made that however the packages are grouped, each product
+                 * can only be put into one package (so no grouping by product variation, for
+                 * example).
+                 *
+                 * @order_id int The Order ID in wp_posts
+                 * @shipping_line_id int The ID of the shipping order line that has just been added.
+                 * @package_key int The index number of the package in the WC()->shipping->get_packages() list
+                 */
+                public static function link_shipping_line_item ( $order_id, $shipping_line_id, $package_key ) {
+                    $packages = WC()->shipping->get_packages();
+
+                    if ( !isset($packages[$package_key]) ) {
+                        return;
+                    }
+
+                    $package = $packages[$package_key];
+
+                    $product_ids = array();
+                    foreach($package['contents'] as $product) {
+                        if ( !in_array($product['product_id'], $product_ids ) ) {
+                            $product_ids[] = $product['product_id'];
+                        }
+                    }
+
+                    // Add the product_ids to the shipping order line, for reference.
+                    wc_add_order_item_meta( $shipping_line_id, 'product_ids', $product_ids, true );
+
+                    // Go through the order lines and find those that contain these product.
+                    $order_line_ids = array();
+                    $order = new WC_Order( $order_id );
+                    foreach ( $order->get_items() as $order_line_id => $product ) {
+                        if ( isset($product['product_id']) && in_array($product['product_id'], $product_ids) ) {
+                            $order_line_ids[] = $order_line_id;
+
+                            // Link this product order line to its shipping order line.
+                            wc_add_order_item_meta( $order_line_id, 'shipping_line_id', $shipping_line_id, true );
+                        }
+                    }
+
+                    // Throw the order line IDs onto the shipping line too, for a two-way
+                    // link.
+                    wc_add_order_item_meta( $shipping_line_id, 'order_line_ids', $order_line_ids, true );
                 }
 
                 /**
@@ -86,6 +138,7 @@ function woocommerce_multiple_packaging_init() {
                             }
 
                         } else {
+                            // FIXME: move these $$ variables into arrays to help debugging.
                             // Create arrays for each shipping class
                             $shipping_classes = array();
                             $other = array();
@@ -98,7 +151,7 @@ function woocommerce_multiple_packaging_init() {
                             }
                             $shipping_classes['misc'] = 'other';
 
-                            // Sort bulky from regular
+                            // Group packages by shipping class (e.g. sort bulky from regular)
                             foreach ( WC()->cart->get_cart() as $item ) {
                                 if ( $item['data']->needs_shipping() ) {
                                     $item_class = $item['data']->get_shipping_class();
