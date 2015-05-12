@@ -5,7 +5,7 @@ Plugin URI: http://www.bolderelements.net/multiple-packages-woocommerce/
 Description: A simple UI to take advatage of multiple shipping packages without PHP knowledge
 Author: Erica Dion
 Author URI: http://www.bolderelements.net/
-Version: 1.1
+Version: 1.1.0
 
 Copyright: © 2014 Bolder Elements (email : erica@bolderelements.net)
 License: GPLv2 or later
@@ -38,7 +38,6 @@ function woocommerce_multiple_packaging_init() {
                     $this->package_restrictions = $settings_class->package_restrictions;
                 }
 
-
                 /**
                  * Get Settings for Restrictions Table
                  *
@@ -49,12 +48,13 @@ function woocommerce_multiple_packaging_init() {
                     if( get_option( 'multi_packages_enabled' ) ) {
                         // Reset the packages
                         $packages = array();
+
                         $settings_class = new BE_Multiple_Packages_Settings();
                         $package_restrictions = $settings_class->package_restrictions;
                         $free_classes = get_option( 'multi_packages_free_shipping' );
 
                         // Determine Type of Grouping
-                        if( get_option( 'multi_packages_type' ) == 'per-product' ) :
+                        if( get_option( 'multi_packages_type' ) == 'per-product' ) {
                             // separate each item into a package
                             $n = 0;
                             foreach ( WC()->cart->get_cart() as $item ) {
@@ -73,7 +73,7 @@ function woocommerce_multiple_packaging_init() {
                                             'address_2' => WC()->customer->get_shipping_address_2()
                                         )
                                     );
-                                    
+
                                     // Determine if 'ship_via' applies
                                     $key = $item['data']->get_shipping_class_id();
                                     if( $free_classes && in_array( $key, $free_classes ) ) {
@@ -84,10 +84,12 @@ function woocommerce_multiple_packaging_init() {
                                     $n++;
                                 }
                             }
-                            
-                        else :
+
+                        } else {
                             // Create arrays for each shipping class
-                            $shipping_classes = $other = array();
+                            $shipping_classes = array();
+                            $other = array();
+
                             $get_classes = WC()->shipping->get_shipping_classes();
                             foreach ( $get_classes as $key => $class ) {
                                 $shipping_classes[ $class->term_id ] = $class->slug;
@@ -111,12 +113,17 @@ function woocommerce_multiple_packaging_init() {
                                     }
                                 }
                             }
-        
+
                             // Put inside packages
                             $n = 0;
                             foreach ($shipping_classes as $key => $value) {
                                 if ( count( $$value ) ) {
+                                    // Custom elements can be added to this array and be displayed
+                                    // in template cart/cart-shipping.php for additional information
+                                    // or context.
+
                                     $packages[ $n ] = array(
+                                        // contents is the array of products in the group.
                                         'contents' => $$value,
                                         'contents_cost' => array_sum( wp_list_pluck( $$value, 'line_total' ) ),
                                         'applied_coupons' => WC()->cart->applied_coupons,
@@ -129,18 +136,17 @@ function woocommerce_multiple_packaging_init() {
                                             'address_2' => WC()->customer->get_shipping_address_2()
                                         )
                                     );
-                                    
+
                                     // Determine if 'ship_via' applies
-                                    if( $free_classes && in_array( $key, $free_classes ) ) {
+                                    if ( $free_classes && in_array( $key, $free_classes ) ) {
                                         $packages[ $n ]['ship_via'] = array('free_shipping');
-                                    } elseif( count( $package_restrictions ) && isset( $package_restrictions[ $key ] ) ) {
+                                    } elseif ( count( $package_restrictions ) && isset( $package_restrictions[ $key ] ) ) {
                                         $packages[ $n ]['ship_via'] = $package_restrictions[ $key ];
                                     }
                                     $n++;
                                 }
                             }
-
-                        endif;
+                        }
 
                         return $packages;
                     }
@@ -153,6 +159,7 @@ function woocommerce_multiple_packaging_init() {
     } // end IF woocommerce exists
 
     add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'be_multiple_packages_plugin_action_links' );
+
     function be_multiple_packages_plugin_action_links( $links ) {
         return array_merge(
             array(

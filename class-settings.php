@@ -42,7 +42,6 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
      * Output the settings
      */
     public function output() {
-
         $settings = $this->get_settings( );
         WC_Admin_Settings::output_fields( $settings );
     }
@@ -51,7 +50,6 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
      * Save settings
      */
     public function save() {
-
         $settings = $this->get_settings( );
         WC_Admin_Settings::save_fields( $settings );
         $this->save_additional_settings();
@@ -64,7 +62,6 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
      * @return array
      */
     function get_settings( $current_section = '' ) {
-
         $shipping_classes = array();
         $get_classes = WC()->shipping->get_shipping_classes();
         foreach ($get_classes as $key => $class) {
@@ -72,7 +69,6 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
         }
 
         return apply_filters('woocommerce_multi_packages_settings', array(
-
             array(	
                 'id' 		=> 'multi-packages_options',
                 'type' 		=> 'title', 
@@ -126,7 +122,6 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
                 'type' 		=> 'shipping_restrictions',
                 ),
             )
-
         );
     }
 
@@ -227,14 +222,12 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
 <?php
     }
 
-
     /**
      * Print Out Additional Settings
      *
      * @return array
      */
     function save_additional_settings( $current_section = '' ) {
-
         if ( isset( $_POST['restrictions'] ) ) {
 
             // Save settings
@@ -250,7 +243,6 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
         }
     }
 
-
     /**
      * Get Settings for Restrictions Table
      *
@@ -260,7 +252,6 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
     function get_package_restrictions() {
         $this->package_restrictions = array_filter( (array) get_option( $this->multi_package_restrictions ) );
     }
-
 }
 
 endif;
