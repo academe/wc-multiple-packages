@@ -109,8 +109,12 @@ function woocommerce_multiple_packaging_init() {
                         $package_restrictions = $settings_class->package_restrictions;
                         $free_classes = get_option( 'multi_packages_free_shipping' );
 
+                        //
+                        $product_meta_prefix = 'product-meta';
+
                         // Determine Type of Grouping
-                        if ( get_option( 'multi_packages_type' ) == 'per-product' ) {
+                        $multi_packages_type = get_option( 'multi_packages_type' );
+                        if ( $multi_packages_type == 'per-product' ) {
                             // separate each item into a package
                             $n = 0;
                             foreach ( WC()->cart->get_cart() as $item ) {
@@ -140,8 +144,7 @@ function woocommerce_multiple_packaging_init() {
                                     $n++;
                                 }
                             }
-
-                        } elseif ( get_option( 'multi_packages_type' ) == 'shipping-class' ) {
+                        } elseif ( $multi_packages_type == 'shipping-class' ) {
                             // FIXME: move these $$ variables into arrays to help debugging.
                             // Create arrays for each shipping class
                             $shipping_classes = array();
@@ -203,14 +206,24 @@ function woocommerce_multiple_packaging_init() {
                                     $n++;
                                 }
                             }
-                        } elseif ( get_option( 'multi_packages_type' ) == 'product-meta' ) {
+                        } elseif ( substr( $multi_packages_type, 0, strlen($product_meta_prefix) ) == $product_meta_prefix ) {
                             // Get the metafield name.
+                            // It can come from the setting in th eplugin admin page, or
+                            // from the package name field, as a suffix.
+                            //
                             // We hope it is lower-case and with underscores, as that is
                             // what most packages seem to use, but the WP documentation is
                             // totally silent on the key format, and in reality anyth string
                             // is accepted.
 
-                            $meta_field_name = get_option( 'multi_packages_meta_field' );
+                            if ( $multi_packages_type == $product_meta_prefix ) {
+                                // A custom meta field key.
+                                $meta_field_name = get_option( 'multi_packages_meta_field' );
+                            } else {
+                                // A pre-defined meta field key.
+                                $meta_field_name = substr($multi_packages_type, strlen($product_meta_prefix));
+echo " meta_field_name=$meta_field_name ";
+                            }
 
                             if (!is_string($meta_field_name) || empty($meta_field_name)) {
                                 // If we don't have a string for the field name, then we
