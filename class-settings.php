@@ -95,7 +95,23 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
                 'options' 	=> array(
                     'shipping-class' 	=> __( 'Shipping Class', 'bolder-multi-package-woo'),
                     'per-product' 		=> __( 'Product (individual)', 'bolder-multi-package-woo' ),
+                    'product-meta' 		=> __( 'Product meta field', 'bolder-multi-package-woo' ),
                     )
+                ),
+
+            // TODO: validate and transform the value entered here.
+            // It should be a valid metafield key. The documentation is
+            // silent on what is "valid", but all examples seem to be
+            // lower-case ASCII with underscores for spaces.
+            array(
+                'id'		=> 'multi_packages_meta_field',
+                'type' 		=> 'text',
+                'class'		=> '',
+                'css'     => 'min-width:300px;',
+                'title' 	=> __( 'Group By Meta Field', 'bolder-multi-package-woo' ),
+                'desc' 		=> '<em>' . __( 'Product metafield name when grouping', 'bolder-multi-package-woo' ) . '</em>',
+                'default' 	=> __( '', 'bolder-multi-package-woo' ),
+                'desc_tip'	=> __( 'The product meta field name used to group the products into shipping packages.', 'bolder-multi-package-woo' ),
                 ),
 
             array(
