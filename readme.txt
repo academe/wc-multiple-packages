@@ -12,15 +12,18 @@ Split up the items in your customer's cart to offer multiple shipping method sel
 
 == Description ==
 
-Take advantage of a new feature presented in WooCommerce 2.1 and split your cart into packages to offer your users 
-multiple shipping selections. Packages can be broken down based on shipping classes or on a per product basis. Each
-group will have its own shipping selection under the shipping section of your cart and checkout forms.
+Take advantage of a new feature presented in WooCommerce 2.1 and split your cart into packages to offer your users multiple shipping selections. Packages can group products for shipping based on:
 
-In addition, this plugin can limit which shipping methods are used for each package. Using the provided table, match
-each shipping class to its applicable method, or leave it blank to include them all!
+* shipping classes
+* any product meta field
+* on a per product basis.
 
-This plugin is designed as a simplistic UI for users who want to separate their cart in packages without the need
-of a developer. The actual functionality of multiple shipping options is provided through WooCommerce 2.1
+Each package group will have its own shipping selection under the shipping section of your cart and checkout forms.
+
+In addition, this plugin can limit which shipping methods are used for each package. Using the provided table, match each shipping class to its applicable method, or leave it blank to include them all! This feature works only for shipping class methods, but is planned to be extended to
+the meta field method.
+
+This plugin is designed as a simplistic UI for users who want to separate their cart in packages without the need of a developer. The actual functionality of multiple shipping options is provided through WooCommerce 2.1+
 
 == Installation ==
 
