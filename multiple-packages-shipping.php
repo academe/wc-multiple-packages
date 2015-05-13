@@ -98,7 +98,11 @@ function woocommerce_multiple_packaging_init() {
                  */
                 public static function generate_packages( $packages ) {
                     if( get_option( 'multi_packages_enabled' ) ) {
-                        // Reset the packages
+                        // Reset the packages.
+                        // CHECKME: do we really want to reset the packages, or can
+                        // we just go over the packages as they are, and maybe split
+                        // them out further if necessary?
+
                         $packages = array();
 
                         $settings_class = new BE_Multiple_Packages_Settings();
@@ -106,7 +110,7 @@ function woocommerce_multiple_packaging_init() {
                         $free_classes = get_option( 'multi_packages_free_shipping' );
 
                         // Determine Type of Grouping
-                        if( get_option( 'multi_packages_type' ) == 'per-product' ) {
+                        if ( get_option( 'multi_packages_type' ) == 'per-product' ) {
                             // separate each item into a package
                             $n = 0;
                             foreach ( WC()->cart->get_cart() as $item ) {
@@ -137,7 +141,7 @@ function woocommerce_multiple_packaging_init() {
                                 }
                             }
 
-                        } else {
+                        } elseif ( get_option( 'multi_packages_type' ) == 'shipping-class' ) {
                             // FIXME: move these $$ variables into arrays to help debugging.
                             // Create arrays for each shipping class
                             $shipping_classes = array();
@@ -199,6 +203,60 @@ function woocommerce_multiple_packaging_init() {
                                     $n++;
                                 }
                             }
+                        } elseif ( get_option( 'multi_packages_type' ) == 'product-meta' ) {
+                            // Get the metafield name.
+                            // We hope it is lower-case and with underscores, as that is
+                            // what most packages seem to use, but the WP documentation is
+                            // totally silent on the key format, and in reality anyth string
+                            // is accepted.
+
+                            $meta_field_name = get_option( 'multi_packages_meta_field' );
+
+                            if (!is_string($meta_field_name) || empty($meta_field_name)) {
+                                // If we don't have a string for the field name, then we
+                                // can't move forward.
+                                return $packages;
+                            }
+
+                            // Go over the items in the cart to get the package names.
+                            foreach ( WC()->cart->get_cart() as $item ) {
+                                if ( $item['data']->needs_shipping() ) {
+                                    $product_id = $item['product_id'];
+
+                                    $meta_value = get_post_meta($product_id, $meta_field_name, true);
+
+
+                                    // Has this package name been encountered already?
+                                    if ( !isset( $packages[$meta_value] ) ) {
+                                        // No - so create it.
+                                        $packages[$meta_value] = array(
+                                            // contents is the array of products in the group.
+                                            'contents' => array(),
+                                            'contents_cost' => 0,
+                                            'applied_coupons' => WC()->cart->applied_coupons,
+                                            'package_name' => $meta_value,
+                                            'destination' => array(
+                                                'country' => WC()->customer->get_shipping_country(),
+                                                'state' => WC()->customer->get_shipping_state(),
+                                                'postcode' => WC()->customer->get_shipping_postcode(),
+                                                'city' => WC()->customer->get_shipping_city(),
+                                                'address' => WC()->customer->get_shipping_address(),
+                                                'address_2' => WC()->customer->get_shipping_address_2()
+                                            )
+                                        );
+                                    }
+
+                                    // Add the item to the package.
+                                    $packages[$meta_value]['contents'][] = $item;
+
+                                    // Add on the line total to the package.
+                                    $packages[$meta_value]['contents_cost'] += $item['line_total'];
+                                }
+                            }
+
+                            // The packages will be indexed by package name.
+                            // We actually want it indexed numerically.
+                            $packages = array_values($packages);
                         }
 
                         return $packages;

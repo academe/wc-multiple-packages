@@ -99,6 +99,10 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
                     )
                 ),
 
+            // TODO: validate and transform the value entered here.
+            // It should be a valid metafield key. The documentation is
+            // silent on what is "valid", but all examples seem to be
+            // lower-case ASCII with underscores for spaces.
             array(
                 'id'		=> 'multi_packages_meta_field',
                 'type' 		=> 'text',
