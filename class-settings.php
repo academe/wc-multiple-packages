@@ -95,8 +95,9 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
                 'options' 	=> array(
                     'shipping-class' 	=> __( 'Shipping Class', 'bolder-multi-package-woo'),
                     'per-product' 		=> __( 'Product (individual)', 'bolder-multi-package-woo' ),
+                    'per-owner' 		=> __( 'Product Owner (vendor)', 'bolder-multi-package-woo' ),
                     'product-meta' 		=> __( 'Custom Product Meta Field', 'bolder-multi-package-woo' ),
-                    'product-meta_printtrail_package' 		=> __( 'Printtrail Product Meta Field', 'bolder-multi-package-woo' ),
+                    'product-meta_printtrail_package' 		=> __( 'Printtrail Package Names', 'bolder-multi-package-woo' ),
                  )
             ),
 

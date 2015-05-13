@@ -146,6 +146,10 @@ function woocommerce_multiple_packaging_init() {
                             }
                         } elseif ( $multi_packages_type == 'shipping-class' ) {
                             // FIXME: move these $$ variables into arrays to help debugging.
+                            // This section seems to be more complicated than it needs to be,
+                            // just because it tries to keep the index of the packages numeric
+                            // right the way through, rather than just make them numeric at the
+                            // end. It could be simplified a lot.
                             // Create arrays for each shipping class
                             $shipping_classes = array();
                             $other = array();
@@ -222,7 +226,6 @@ function woocommerce_multiple_packaging_init() {
                             } else {
                                 // A pre-defined meta field key.
                                 $meta_field_name = substr($multi_packages_type, strlen($product_meta_prefix));
-echo " meta_field_name=$meta_field_name ";
                             }
 
                             if (!is_string($meta_field_name) || empty($meta_field_name)) {
@@ -238,6 +241,50 @@ echo " meta_field_name=$meta_field_name ";
 
                                     $meta_value = get_post_meta($product_id, $meta_field_name, true);
 
+                                    // Has this package name been encountered already?
+                                    if ( !isset( $packages[$meta_value] ) ) {
+                                        // No - so create it.
+                                        $packages[$meta_value] = array(
+                                            // contents is the array of products in the group.
+                                            'contents' => array(),
+                                            'contents_cost' => 0,
+                                            'applied_coupons' => WC()->cart->applied_coupons,
+                                            'package_name' => $meta_value,
+                                            'destination' => array(
+                                                'country' => WC()->customer->get_shipping_country(),
+                                                'state' => WC()->customer->get_shipping_state(),
+                                                'postcode' => WC()->customer->get_shipping_postcode(),
+                                                'city' => WC()->customer->get_shipping_city(),
+                                                'address' => WC()->customer->get_shipping_address(),
+                                                'address_2' => WC()->customer->get_shipping_address_2()
+                                            )
+                                        );
+                                    }
+
+                                    // Add the item to the package.
+                                    $packages[$meta_value]['contents'][] = $item;
+
+                                    // Add on the line total to the package.
+                                    $packages[$meta_value]['contents_cost'] += $item['line_total'];
+                                }
+                            }
+
+                            // The packages will be indexed by package name.
+                            // We actually want it indexed numerically.
+                            $packages = array_values($packages);
+                        } elseif ( $multi_packages_type == 'per-owner' ) {
+                            // FIXME: this is 90% duplicated from the previous grouping
+                            // option. Do some refactoring.
+                            // Go over the items in the cart to get the package names.
+                            foreach ( WC()->cart->get_cart() as $item ) {
+                                if ( $item['data']->needs_shipping() ) {
+                                    $product_id = $item['product_id'];
+
+                                    if ( isset( $item['data']->post->post_author ) ) {
+                                        $meta_value = $item['data']->post->post_author;
+                                    } else {
+                                        $meta_value = '-1';
+                                    }
 
                                     // Has this package name been encountered already?
                                     if ( !isset( $packages[$meta_value] ) ) {
