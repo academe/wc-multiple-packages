@@ -4,7 +4,7 @@ Donate link: http://bolderelements.net/
 Tags: woocommerce, shipping, packages
 Requires at least: 3.8
 Tested up to: 4.2.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,6 +16,7 @@ Take advantage of a new feature presented in WooCommerce 2.1 and split your cart
 
 * shipping classes
 * any product meta field
+* product owner (vendor using many WC vendor plugins)
 * on a per product basis.
 
 Each package group will have its own shipping selection under the shipping section of your cart and checkout forms.

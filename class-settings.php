@@ -8,34 +8,52 @@
  * @version     1.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+// Exit if accessed directly.
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-if ( ! class_exists( 'BE_Multiple_Packages_Settings' ) ) :
+if (!class_exists('BE_Multiple_Packages_Settings')) :
 
-include_once( WC()->plugin_path().'/includes/admin/settings/class-wc-settings-page.php' );
+// Ensure the base class is defined.
+include_once(WC()->plugin_path() . '/includes/admin/settings/class-wc-settings-page.php');
+include_once(dirname(__FILE__) . '/multiple-packages-shipping.php');
 
-class BE_Multiple_Packages_Settings extends WC_Settings_Page {
+class BE_Multiple_Packages_Settings extends WC_Settings_Page
+{
+    // Singleton instance.
+    private static $instance;
 
     /**
      * Constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         global $woocommerce;
 
         $this->id = 'multiple_packages';
         $this->version = '1.0';
-        $this->label = __( 'Multiple Packages', 'bolder-multi-package-woo' );
-        $this->multi_package_restrictions = 'bolder_multi_package_woo_restrictions';
+        $this->label = __('Multiple Packages', 'bolder-multi-package-woo');
+        //$this->multi_package_restrictions = 'bolder_multi_package_woo_restrictions';
 
         $this->get_package_restrictions();
 
-        add_filter( 'woocommerce_settings_tabs_array', array( $this, 'add_settings_page' ), 82 );
-        add_action( 'woocommerce_settings_' . $this->id, array( $this, 'output' ) );
-        add_action( 'woocommerce_admin_field_shipping_restrictions', array( $this, 'output_additional_settings' ) );
-        add_action( 'woocommerce_settings_save_' . $this->id, array( $this, 'save' ) );
-        add_action( 'woocommerce_sections_' . $this->id, array( $this, 'output_sections' ) );
-        add_action( 'woocommerce_sections_' . $this->id, array( $this, 'additional_output' ) );
+        // Hooks to make a prescence into the WC settings pages.
 
+        add_filter('woocommerce_settings_tabs_array', array($this, 'add_settings_page'), 82);
+        add_action('woocommerce_settings_' . $this->id, array($this, 'output'));
+        add_action('woocommerce_admin_field_shipping_restrictions', array($this, 'output_additional_settings'));
+        add_action('woocommerce_settings_save_' . $this->id, array($this, 'save'));
+        add_action('woocommerce_sections_' . $this->id, array($this, 'output_sections'));
+        //add_action('woocommerce_sections_' . $this->id, array($this, 'additional_output'));
+    }
+
+    // Create a new singleton instance.
+    public static function get_instance() {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     /**
@@ -69,36 +87,36 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
         }
 
         return apply_filters('woocommerce_multi_packages_settings', array(
-            array(	
-                'id' 		=> 'multi-packages_options',
-                'type' 		=> 'title', 
-                'title' 	=> __( 'Multiple Packages for Shipping', 'woocommerce' ), 
-                'desc' 		=> __( 'Separate your customer\'s shopping cart into groups or per product to display multiple shipping select boxes', 'woocommerce' ), 
-                ),
+            array(
+                'id'        => 'multi-packages_options',
+                'type'      => 'title', 
+                'title'     => __( 'Multiple Packages for Shipping', 'woocommerce' ), 
+                'desc'      => __( 'Separate your customer\'s shopping cart into groups or per product to display multiple shipping select boxes', 'woocommerce' ), 
+            ),
 
             array(
-                'id'		=> 'multi_packages_enabled',
-                'type' 		=> 'checkbox',
-                'title' 	=> __( 'Enable/Disable', 'bolder-multi-package-woo' ),
-                'default' 	=> 'yes',
-                'desc'		=> __( 'Enable Multiple Shipping Packages', 'bolder-multi-package-woo' ),
-                ),
+                'id'        => 'multi_packages_enabled',
+                'type'      => 'checkbox',
+                'title'     => __( 'Enable/Disable', 'bolder-multi-package-woo' ),
+                'default'   => 'yes',
+                'desc'      => __( 'Enable Multiple Shipping Packages', 'bolder-multi-package-woo' ),
+            ),
 
              array(
-                'id'		=> 'multi_packages_type',
-                'type' 		=> 'select',
-                'title' 	=> __( 'Group By', 'bolder-multi-package-woo' ),
-                'desc' 		=> __( 'How packages are defined, in groups or per product','bolder-multi-package-woo'),
-                'default' 	=> 'shipping-class',
-                'class'		=> 'chosen_select',
-                'desc_tip'	=> true,
-                'options' 	=> array(
-                    'shipping-class' 	=> __( 'Shipping Class', 'bolder-multi-package-woo'),
-                    'per-product' 		=> __( 'Product (individual)', 'bolder-multi-package-woo' ),
-                    'per-owner' 		=> __( 'Product Owner (vendor)', 'bolder-multi-package-woo' ),
-                    'product-meta' 		=> __( 'Custom Product Field', 'bolder-multi-package-woo' ),
-                    'product-meta_printtrail_package' 		=> __( 'Printtrail Package Names', 'bolder-multi-package-woo' ),
-                 )
+                'id'        => 'multi_packages_type',
+                'type'      => 'select',
+                'title'     => __( 'Group By', 'bolder-multi-package-woo' ),
+                'desc'      => __( 'How packages are defined, in groups or per product','bolder-multi-package-woo'),
+                'default'   => 'shipping-class',
+                'class'     => 'chosen_select',
+                'desc_tip'  => true,
+                'options'   => array(
+                    'shipping-class' => __( 'Shipping Class', 'bolder-multi-package-woo'),
+                    'per-product' => __( 'Product (individual)', 'bolder-multi-package-woo' ),
+                    'per-owner' => __( 'Product Owner (vendor)', 'bolder-multi-package-woo' ),
+                    'product-meta' => __( 'Custom Product Field', 'bolder-multi-package-woo' ),
+                    'product-meta_printtrail_package' => __( 'Printtrail Package Names', 'bolder-multi-package-woo' ),
+                 ),
             ),
 
             // TODO: validate and transform the value entered here.
@@ -106,41 +124,43 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
             // silent on what is "valid", but all examples seem to be
             // lower-case ASCII with underscores for spaces.
             array(
-                'id'		=> 'multi_packages_meta_field',
-                'type' 		=> 'text',
-                'class'		=> '',
-                'css'     => 'min-width:300px;',
-                'title' 	=> __( 'Group By Meta Field', 'bolder-multi-package-woo' ),
-                'desc' 		=> '<em>' . __( 'Custom product meta field key', 'bolder-multi-package-woo' ) . '</em>',
-                'default' 	=> __( '', 'bolder-multi-package-woo' ),
-                'desc_tip'	=> __( 'The custom product meta field name (key) used to group the products into shipping packages.', 'bolder-multi-package-woo' ),
-                ),
+                'id'        => 'multi_packages_meta_field',
+                'type'      => 'text',
+                'class'     => '',
+                'css'       => 'min-width:300px;',
+                'title'     => __( 'Group By Meta Field', 'bolder-multi-package-woo' ),
+                'desc'  => '<em>' . __( 'Custom product meta field key', 'bolder-multi-package-woo' ) . '</em>',
+                'default'   => __( '', 'bolder-multi-package-woo' ),
+                'desc_tip'  => __( 'The custom product meta field name (key) used to group the products into shipping packages.', 'bolder-multi-package-woo' ),
+            ),
 
             array(
-                'id'		=> 'multi_packages_free_shipping',
-                'type' 		=> 'multiselect',
-                'class'		=> 'chosen_select',
-                'title' 	=> __( 'Free Shipping Classes', 'bolder-multi-package-woo' ),
-                'desc' 		=> '<em>' . __( '\'Free_Shipping\' method must be enabled', 'bolder-multi-package-woo' ) . '</em>',
-                'default' 	=> __( 'Let me know when this item is back in stock!', 'bolder-multi-package-woo' ),
-                'desc_tip'	=> __( 'Exclude the selected shipping classes from being charged shipping', 'bolder-multi-package-woo' ),
-                'options' 	=> $shipping_classes,
-                ),
-
-            array( 'type' => 'sectionend', 'id' => 'message_text' ),
-
-            array(	
-                'id' 		=> 'multi_packages_method_settings',
-                'type' 		=> 'title', 
-                'title' 	=> __( 'Shipping Method Restrictions', 'woocommerce' ), 
-                'desc' 		=> __( 'Select which shipping methods will be used for each shipping class package', 'woocommerce' ), 
-                ),
+                'id'        => 'multi_packages_free_shipping',
+                'type'      => 'multiselect',
+                'class'     => 'chosen_select',
+                'title'     => __( 'Free Shipping Classes', 'bolder-multi-package-woo' ),
+                'desc'      => '<em>' . __( '\'Free_Shipping\' method must be enabled', 'bolder-multi-package-woo' ) . '</em>',
+                'default'   => __( 'Let me know when this item is back in stock!', 'bolder-multi-package-woo' ),
+                'desc_tip'  => __( 'Exclude the selected shipping classes from being charged shipping', 'bolder-multi-package-woo' ),
+                'options'   => $shipping_classes,
+            ),
 
             array(
-                'type' 		=> 'shipping_restrictions',
-                ),
-            )
-        );
+                'type' => 'sectionend',
+                'id' => 'message_text'
+            ),
+
+            array(
+                'id'        => 'multi_packages_method_settings',
+                'type'      => 'title', 
+                'title'     => __( 'Shipping Method Restrictions', 'woocommerce' ), 
+                'desc'      => __( 'Select which shipping methods will be used for each shipping class package', 'woocommerce' ), 
+            ),
+
+            array(
+                'type'      => 'shipping_restrictions',
+            ),
+        ));
     }
 
 
@@ -149,12 +169,14 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
      *
      * @return array
      */
-    function output_additional_settings( $current_section = '' ) {
+    function output_additional_settings($current_section = '')
+    {
         // get list of current shipping classes		
         $shipping_classes = array();
         $get_classes = WC()->shipping->get_shipping_classes();
+
         foreach ($get_classes as $key => $class) {
-            $shipping_classes[ $class->term_id ] = $class->name;
+            $shipping_classes[$class->term_id] = $class->name;
         }
 
         $shipping_methods = WC()->shipping->load_shipping_methods();
@@ -177,15 +199,15 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
                             </thead>
                             <tfoot>
                                 <tr>
-                                    <td colspan="<?php echo $total_shipping_methods; ?>"><em><?php _e( 'If left blank, all active shipping methods will be used for each shipping class', 'bolder-multi-package-woo' ); ?></em></td>
+                                    <td colspan="<?php echo $total_shipping_methods; ?>"><em><?php _e('If left blank, all active shipping methods will be used for each shipping class', 'bolder-multi-package-woo');?> </em></td>
                                 </tr>
                             </tfoot>
                             <tbody class="shipping_restrictions">
 <?php
                             $i = -1;
-                            if( count( $shipping_classes ) > 0 ) :
+                            if (count($shipping_classes) > 0) :
 
-                                foreach ( $shipping_classes as $id => $name ) :
+                                foreach ($shipping_classes as $id => $name) :
 ?>
                                 <tr>
                                     <td class="class_name"><?php echo $name; ?></td>
@@ -257,7 +279,7 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
                 }
             }
 
-            update_option( $this->multi_package_restrictions, $restrictions_safe );
+            update_option(BE_Multiple_Packages::MULTI_PACKAGE_RESTRICTIONS, $restrictions_safe );
         }
     }
 
@@ -268,10 +290,8 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page {
      * @return void
      */
     function get_package_restrictions() {
-        $this->package_restrictions = array_filter( (array) get_option( $this->multi_package_restrictions ) );
+        $this->package_restrictions = array_filter( (array) get_option( BE_Multiple_Packages::MULTI_PACKAGE_RESTRICTIONS ) );
     }
 }
 
 endif;
-
-return new BE_Multiple_Packages_Settings();
