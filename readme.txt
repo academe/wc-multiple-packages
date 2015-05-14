@@ -59,6 +59,12 @@ directory take precedence. For example, `/assets/screenshot-1.png` would win ove
 
 == Changelog ==
 
+= 1.1.1 =
+* Refactor to use (eager-loading) singletons.
+* Only load settings class whwn in admin area.
+= 1.1.0 =
+* PHP fixes
+* Extend types of package grouping available.
 = 1.0 =
 * Initial Release
 
