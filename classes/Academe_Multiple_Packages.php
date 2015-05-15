@@ -1,20 +1,55 @@
 <?php
 
-class BE_Multiple_Packages
+class Academe_Multiple_Packages
 {
-    const MULTI_PACKAGE_RESTRICTIONS = 'bolder_multi_package_woo_restrictions';
-
     // Singleton instance.
     private static $instance;
 
     // The current packages list.
-    private $packages = array();
+    protected $packages = array();
+
+    // Shipping plugin enabled?
+    protected $enabled;
+
+    protected $multi_packages_free_shipping;
+    protected $multi_packages_type;
+    protected $multi_packages_meta_field;
+    protected $shipping_restrictions_classes = array();
 
     /**
      * Constructor.
      */
     public function __construct()
     {
+        // Get the settings from the plugin.
+        // CHEKME: there may be an API for this.
+        $settings = get_option(
+            'woocommerce_' . 'academe_multiple' . '_packages_settings',
+            array()
+        );
+
+        // Extract some of the settings we will need.
+        $this->enabled = !empty($settings['multi_packages_enabled']);
+
+        $this->multi_packages_free_shipping =
+            isset($settings['multi_packages_free_shipping'])
+            ? $settings['multi_packages_free_shipping']
+            : '';
+
+        $this->multi_packages_type =
+            isset($settings['multi_packages_type'])
+            ? $settings['multi_packages_type']
+            : '';
+
+        $this->multi_packages_meta_field =
+            isset($settings['multi_packages_meta_field'])
+            ? $settings['multi_packages_meta_field']
+            : '';
+
+        $this->shipping_restrictions_classes =
+            isset($settings['shipping_restrictions_classes'])
+            ? $settings['shipping_restrictions_classes']
+            : array();
     }
 
     // Create a new singleton instance.
@@ -82,20 +117,21 @@ class BE_Multiple_Packages
      */
     public function generate_packages($packages)
     {
-        if (get_option('multi_packages_enabled')) {
+        if ($this->enabled) {
             // Reset the packages.
             // CHECKME: do we really want to reset the packages, or can
             // we just go over the packages as they are, and maybe split
             // them out further if necessary?
 
-            $package_restrictions = $this->get_package_restrictions();
-            $free_classes = get_option('multi_packages_free_shipping');
+            $package_restrictions = $this->shipping_restrictions_classes;
+
+            $free_classes = $this->multi_packages_free_shipping;
 
             //
             $product_meta_prefix = 'product-meta';
 
             // Determine Type of Grouping
-            $multi_packages_type = get_option( 'multi_packages_type' );
+            $multi_packages_type = $this->multi_packages_type;
             if ($multi_packages_type == 'per-product') {
                 // separate each item into a package
                 $n = 0;
@@ -204,7 +240,7 @@ class BE_Multiple_Packages
 
                 if ($multi_packages_type == $product_meta_prefix) {
                     // A custom meta field key.
-                    $meta_field_name = get_option('multi_packages_meta_field');
+                    $meta_field_name = $this->multi_packages_meta_field;
                 } else {
                     // A pre-defined meta field key.
                     $meta_field_name = substr($multi_packages_type, strlen($product_meta_prefix));
@@ -292,15 +328,5 @@ class BE_Multiple_Packages
 
         // Add on the line total to the package.
         $this->packages[$package_id]['contents_cost'] += $item['line_total'];
-    }
-
-    /**
-     * Get Settings for Restrictions Table
-     *
-     * @access public
-     * @return void
-     */
-    static function get_package_restrictions() {
-        return array_filter((array)get_option(BE_Multiple_Packages::MULTI_PACKAGE_RESTRICTIONS));
     }
 }

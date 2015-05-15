@@ -1,10 +1,12 @@
 <?php
 /**
+ * DEPRECATED - TO BE REMOVED
+ *
  * WooCommerce Multiple Packages Settings Page
  *
- * @author 		Erica Dion
- * @category 	Classes
- * @package 	WooCommerce-Multiple-Packaging
+ * @author      Jason Judge, Erica Dion
+ * @category    Classes
+ * @package     WooCommerce-Multiple-Packaging
  * @version     1.0
  */
 
@@ -13,13 +15,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-if (!class_exists('BE_Multiple_Packages_Settings')) :
+//if (!class_exists('Academe_Multiple_Packages_Settings')) {
 
 // Ensure the base class is defined.
 include_once(WC()->plugin_path() . '/includes/admin/settings/class-wc-settings-page.php');
-include_once(dirname(__FILE__) . '/multiple-packages-shipping.php');
+include_once(dirname(__FILE__) . '/multiple-packages-shipping.php'); // This should already be loaded.
 
-class BE_Multiple_Packages_Settings extends WC_Settings_Page
+class Academe_Multiple_Packages_Settings extends WC_Settings_Page // WC_Shipping_Method
 {
     // Singleton instance.
     private static $instance;
@@ -34,7 +36,6 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page
         $this->id = 'multiple_packages';
         $this->version = '1.0';
         $this->label = __('Multiple Packages', 'bolder-multi-package-woo');
-        //$this->multi_package_restrictions = 'bolder_multi_package_woo_restrictions';
 
         $this->get_package_restrictions();
 
@@ -45,7 +46,6 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page
         add_action('woocommerce_admin_field_shipping_restrictions', array($this, 'output_additional_settings'));
         add_action('woocommerce_settings_save_' . $this->id, array($this, 'save'));
         add_action('woocommerce_sections_' . $this->id, array($this, 'output_sections'));
-        //add_action('woocommerce_sections_' . $this->id, array($this, 'additional_output'));
     }
 
     // Create a new singleton instance.
@@ -59,15 +59,17 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page
     /**
      * Output the settings
      */
-    public function output() {
-        $settings = $this->get_settings( );
-        WC_Admin_Settings::output_fields( $settings );
+    public function output()
+    {
+        $settings = $this->get_settings();
+        WC_Admin_Settings::output_fields($settings);
     }
 
     /**
      * Save settings
      */
-    public function save() {
+    public function save()
+    {
         $settings = $this->get_settings( );
         WC_Admin_Settings::save_fields( $settings );
         $this->save_additional_settings();
@@ -79,7 +81,8 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page
      *
      * @return array
      */
-    function get_settings( $current_section = '' ) {
+    function get_settings($current_section = '')
+    {
         $shipping_classes = array();
         $get_classes = WC()->shipping->get_shipping_classes();
         foreach ($get_classes as $key => $class) {
@@ -231,55 +234,24 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page
 <?php
     }
 
-
     /**
-     * Output Additional Information
+     * Save Additional Settings
      *
      * @return array
      */
-    function additional_output( $current_section = '' ) {
-?>
-            <style>.woocommerce_wrap { position:relative; padding-right: 300px; } a:hover { text-decoration: none; }</style>
-            <div class="woocommerce_wrap">
-            <div style="position:absolute;top:25px;right:10px;width:275px;display:block;padding:10px;border:1px solid #9dbc5a;border-radius:5px;">
-                <h3>Bolder Elements also offers premium plugins! Here are a few you might be interested in...</h3>
-                <div style="margin-bottom:25px;">
-                    <strong>Table Rate Shipping for WooCommerce</strong>
-                    <p>Has the ability to return multiple rates based on a variety of conditions such as location, subtotal, shipping class, weight, and more</p>
-                    <p style="text-align:right"><a href="http://codecanyon.net/item/table-rate-shipping-for-woocommerce/3796656?ref=bolderelements" style="color:#9dbc5a;" target="_blank">More Info</a></p>
-                </div>
-                <div style="margin-bottom:25px;">
-                    <strong>Bolder Fees for WooCommerce</strong>
-                    <p>Add extra flat rate, percentage, and even optional (checkbox) fees to the customer's cart. Can be based on subtotal, item details, and more</p>
-                    <p style="text-align:right"><a href="http://codecanyon.net/item/bolder-fees-for-woocommerce/6125068?ref=bolderelements" style="color:#9dbc5a;" target="_blank">More Info</a></p>
-                </div>
-                <div style="">
-                    <strong>Cart Based Shipping for WooCommerce</strong>
-                    <p>Allows you to change the shipping rate based on the customer's cart. Could be based on the subtotal, item count, or weight.</p>
-                    <p style="text-align:right"><a href="http://codecanyon.net/item/woocommerce-cart-based-shipping/3156515?ref=bolderelements" style="color:#9dbc5a;" target="_blank">More Info</a></p>
-                </div>
-            </div>
-<?php
-    }
-
-    /**
-     * Print Out Additional Settings
-     *
-     * @return array
-     */
-    function save_additional_settings( $current_section = '' ) {
-        if ( isset( $_POST['restrictions'] ) ) {
+    function save_additional_settings($current_section = '') {
+        if (isset($_POST['restrictions'])) {
 
             // Save settings
             $restrictions_safe = array();
             foreach ($_POST['restrictions'] as $key => $value) {
                 $key_safe = intval( $key );
                 foreach ($value as $key_method => $value_method) {
-                    $restrictions_safe[ $key_safe ][] = sanitize_title( $key_method );
+                    $restrictions_safe[ $key_safe ][] = sanitize_title($key_method);
                 }
             }
 
-            update_option(BE_Multiple_Packages::MULTI_PACKAGE_RESTRICTIONS, $restrictions_safe );
+            update_option(Academe_Multiple_Packages::MULTI_PACKAGE_RESTRICTIONS, $restrictions_safe );
         }
     }
 
@@ -290,8 +262,10 @@ class BE_Multiple_Packages_Settings extends WC_Settings_Page
      * @return void
      */
     function get_package_restrictions() {
-        $this->package_restrictions = array_filter( (array) get_option( BE_Multiple_Packages::MULTI_PACKAGE_RESTRICTIONS ) );
+        $this->package_restrictions = array_filter(
+            (array) get_option(Academe_Multiple_Packages::MULTI_PACKAGE_RESTRICTIONS)
+        );
     }
 }
 
-endif;
+//}

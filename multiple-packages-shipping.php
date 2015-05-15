@@ -1,69 +1,70 @@
 <?php
 /*
-Plugin Name: Multiple Packages for WooCommerce
-Plugin URI: http://www.bolderelements.net/multiple-packages-woocommerce/
-Description: A simple UI to take advatage of multiple shipping packages without PHP knowledge
-Author: Erica Dion
+Plugin Name: WooCommerce Multiple Packages Configuration
+Plugin URI: https://github.com/academe/wc-multiple-packages
+Description: Configure product grouping for shipping packages.
+Author: Jason Judge
+Author: Erica Dion erica@bolderelements.net
+Author URI: https://github.com/judgej
 Author URI: http://www.bolderelements.net/
-Version: 1.1.1
+Version: 1.2.0
 
-Copyright: © 2014 Bolder Elements (email : erica@bolderelements.net)
+Copyright: © 2014 Bolder Elements, © 2015 Academe Computing
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
-add_action('plugins_loaded', 'woocommerce_multiple_packaging_init', 106);
+/**
+ * Check if WooCommerce is active.
+ */
+if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
 
-function woocommerce_multiple_packaging_init()
-{
-    /**
-     * Check if WooCommerce is active
-     */
-    if (class_exists( 'woocommerce' ) || class_exists( 'WooCommerce' )) {
-        if (!class_exists('BE_Multiple_Packages')) {
-            // Include the class and create a singleton.
-            // FIXME: we only really want to create the singleton when we need it,
-            // so the filter and action that hook into the multiple packages
-            // class should use an intermediate class that creates the singleton
-            // on first use.
-
-            include_once(dirname(__FILE__) . '/BE_Multiple_Packages.php');
-            //$be_multiple_packages = BE_Multiple_Packages::get_instance();
-
-            add_filter(
-                'woocommerce_cart_shipping_packages',
-                array(BE_Multiple_Packages::get_instance(), 'generate_packages')
-            );
-
-            // Allows plugins to add order item meta to shipping
-            add_action(
-                'woocommerce_add_shipping_order_item',
-                array(BE_Multiple_Packages::get_instance(), 'link_shipping_line_item'),
-                10, 3
-            );
-        } // end IF class 'BE_Multiple_Packages' exists
-
-        // The settings are needed only when in the admin area.
-        if (is_admin()) {
-            // Include the settings and create a new instance.
-            require_once(dirname(__FILE__) . '/class-settings.php');
-            BE_Multiple_Packages_Settings::get_instance();
-        }
-    } // woocommerce exists
-
-    add_filter(
-        'plugin_action_links_' . plugin_basename( __FILE__ ),
-        'be_multiple_packages_plugin_action_links'
-    );
-
-    function be_multiple_packages_plugin_action_links( $links ) {
-        return array_merge(
-            array(
-                'settings' => '<a href="' . get_bloginfo( 'wpurl' ) . '/wp-admin/admin.php?page=wc-settings&tab=multiple_packages">Settings</a>',
-                'support' => '<a href="http://bolderelements.net/" target="_blank">Bolder Elements</a>'
-            ),
-            $links
-        );
+    if (!class_exists('Academe_Multiple_Packages')) {
+        // Include the main class.
+        // We will keep classes each defined in their own files.
+        include_once(dirname(__FILE__) . '/classes/Academe_Multiple_Packages.php');
     }
 
-} // end function: woocommerce_multiple_packaging_init
+    add_filter(
+        'woocommerce_cart_shipping_packages',
+        array(Academe_Multiple_Packages::get_instance(), 'generate_packages')
+    );
+
+    // Allows plugins to add order item meta to shipping
+    add_action(
+        'woocommerce_add_shipping_order_item',
+        array(Academe_Multiple_Packages::get_instance(), 'link_shipping_line_item'),
+        10, 3
+    );
+
+    /**
+     * Check if WooCommerce is active.
+     * The settings are needed only when in the admin area.
+     */
+    if (is_admin()) {
+        /**
+         * Define the shipping method.
+         */
+        function woocommerce_multiple_packaging_init()
+        {
+            if (!class_exists('Academe_Multiple_Packages_Settings')) {
+                // Include the settings and create a new instance.
+                //require_once(dirname(__FILE__) . '/class-settings.php');
+                require_once(dirname(__FILE__) . '/classes/Academe_Multiple_Packages_Settings.php');
+            }
+
+            //Academe_Multiple_Packages_Settings::get_instance();
+        }
+        add_action('woocommerce_shipping_init', 'woocommerce_multiple_packaging_init');
+
+        /**
+         * Add the shipping method to the WC list of methods.
+         */
+        function add_woocommerce_multiple_packaging($methods)
+        {
+            $methods[] = 'Academe_Multiple_Packages_Settings';
+            return $methods;
+        }
+        add_filter('woocommerce_shipping_methods', 'add_woocommerce_multiple_packaging');
+    }
+}
