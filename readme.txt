@@ -1,6 +1,6 @@
 === Plugin Name ===
-Contributors: hystericallyme
-Donate link: http://bolderelements.net/
+Contributors: hystericallyme, judgej
+Donate link: 
 Tags: woocommerce, shipping, packages
 Requires at least: 3.8
 Tested up to: 4.2.2

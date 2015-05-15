@@ -49,7 +49,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         {
             if (!class_exists('Academe_Multiple_Packages_Settings')) {
                 // Include the settings and create a new instance.
-                //require_once(dirname(__FILE__) . '/class-settings.php');
                 require_once(dirname(__FILE__) . '/classes/Academe_Multiple_Packages_Settings.php');
             }
 
