@@ -5,6 +5,9 @@ class Academe_Multiple_Packages
     // Singleton instance.
     private static $instance;
 
+    // The shipping method ID.
+    protected $id = 'academe_multiple_packages';
+
     // The current packages list.
     protected $packages = array();
 
@@ -24,7 +27,7 @@ class Academe_Multiple_Packages
         // Get the settings from the plugin.
         // CHEKME: there may be an API for this.
         $settings = get_option(
-            'woocommerce_' . 'academe_multiple' . '_packages_settings',
+            'woocommerce_' . $this->id . '_settings',
             array()
         );
 

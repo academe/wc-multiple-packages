@@ -12,9 +12,6 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
         // Description shown in admin
         $this->method_description = __('Group products in an order into shipping packages');
 
-        // Can be forced if needed, but we'll just keep it selectable in the settings page.
-        //$this->enabled  = "yes";
-
         $this->init();
     }
 
