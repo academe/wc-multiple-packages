@@ -102,7 +102,7 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
             'multi_packages_enabled' => array(
                 'id'        => 'multi_packages_enabled',
                 'type'      => 'checkbox',
-                'title'     => __('Enable/Disable', 'bolder-multi-package-woo'),
+                'title'     => __('Enable Package Grouping', 'bolder-multi-package-woo'),
                 'default'   => 'yes',
                 'desc'      => __('Enable Multiple Shipping Packages', 'bolder-multi-package-woo'),
             ),
@@ -133,8 +133,8 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
                 'type'      => 'text',
                 'class'     => '',
                 'css'       => 'min-width:300px;',
-                'title'     => __('Group By Meta Field', 'bolder-multi-package-woo'),
-                'desc'  => '<em>' . __('Custom product meta field key', 'bolder-multi-package-woo') . '</em>',
+                'title'     => __('Custom Field to Group By', 'bolder-multi-package-woo'),
+                'desc'  => '<em>' . __('Custom product field key', 'bolder-multi-package-woo') . '</em>',
                 'default'   => __('', 'bolder-multi-package-woo'),
                 'desc_tip'  => __('The custom product meta field name (key) used to group the products into shipping packages.', 'bolder-multi-package-woo'),
             ),
@@ -153,7 +153,7 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
             'multi_packages_method_settings' => array(
                 'id'        => 'multi_packages_method_settings',
                 'type'      => 'title',
-                'title'     => __('Shipping Method Restrictions by Class', 'woocommerce'),
+                'title'     => __('Shipping Method Restrictions When Grouping by Class', 'woocommerce'),
                 'desc'      => __('Select which shipping methods will be used for each shipping class package', 'woocommerce'),
             ),
 
