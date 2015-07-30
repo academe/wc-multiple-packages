@@ -9,6 +9,7 @@ class Academe_Multiple_Packages
     protected $id = 'academe_multiple_packages';
 
     // The current packages list.
+
     protected $packages = array();
 
     // Shipping plugin enabled?
@@ -18,6 +19,10 @@ class Academe_Multiple_Packages
     protected $multi_packages_type;
     protected $multi_packages_meta_field;
     protected $shipping_restrictions_classes = array();
+
+    // Meta field names used to link shipping IDs and item IDs.
+    const SHIPPING_LINE_ID_FIELD = '_shipping_line_id';
+    const ORDER_LINE_IDS_FIELD = '_order_line_ids';
 
     /**
      * Constructor.
@@ -103,13 +108,14 @@ class Academe_Multiple_Packages
                 $order_line_ids[] = $order_line_id;
 
                 // Link this product order line to its shipping order line.
-                wc_add_order_item_meta($order_line_id, 'shipping_line_id', $shipping_line_id, true);
+                wc_add_order_item_meta($order_line_id, static::SHIPPING_LINE_ID_FIELD, $shipping_line_id, true);
             }
         }
 
         // Throw the order line IDs onto the shipping line too, for a two-way
         // link.
-        wc_add_order_item_meta($shipping_line_id, 'order_line_ids', $order_line_ids, true);
+        // Convert it to a string before saving it, as arrays do not get exposed to the REST API.
+        wc_add_order_item_meta($shipping_line_id, static::ORDER_LINE_IDS_FIELD, implode('|', $order_line_ids), true);
     }
 
     /**
