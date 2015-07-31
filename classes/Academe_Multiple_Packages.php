@@ -23,6 +23,7 @@ class Academe_Multiple_Packages
     // Meta field names used to link shipping IDs and item IDs.
     const SHIPPING_LINE_ID_FIELD = '_shipping_line_id';
     const ORDER_LINE_IDS_FIELD = '_order_line_ids';
+    const ORDER_PRODUCT_IDS_FIELD = '_product_ids';
 
     /**
      * Constructor.
@@ -98,7 +99,8 @@ class Academe_Multiple_Packages
         }
 
         // Add the product_ids to the shipping order line, for reference.
-        wc_add_order_item_meta($shipping_line_id, 'product_ids', $product_ids, true);
+        // Implode to a string, otherwise the API has difficulty supplying it.
+        wc_add_order_item_meta($shipping_line_id, self::ORDER_PRODUCT_IDS_FIELD, implode('|', $product_ids), true);
 
         // Go through the order lines and find those that contain these product.
         $order_line_ids = array();
@@ -327,7 +329,7 @@ class Academe_Multiple_Packages
     /**
      * Add an item to a package.
      */
-    function package_add_item($package_id, $item)
+    protected function package_add_item($package_id, $item)
     {
         // Make sure the package exists.
         $this->check_create_package($package_id);
@@ -338,4 +340,39 @@ class Academe_Multiple_Packages
         // Add on the line total to the package.
         $this->packages[$package_id]['contents_cost'] += $item['line_total'];
     }
+
+    /**
+     * Add shipping line meta fields to the shipping line in the order API.
+     */
+    public static function api_show_shipping_line_meta($order_data, $order, $fields, $server)
+    {
+        if (!empty($order_data['shipping_lines'])) {
+            $shipping_methods = $order->get_shipping_methods();
+            //mail('jason@consil.co.uk', 'shipping methods', print_r($shipping_methods, true));
+
+            foreach($order_data['shipping_lines'] as $key => $shipping_line) {
+                $shipping_line_id = $shipping_line['id'];
+
+                $item_meta = array();
+
+                if (isset($shipping_methods[$shipping_line_id])) {
+                    $meta = new WC_Order_Item_Meta($shipping_methods[$shipping_line_id]);
+
+                    $hideprefix = null;
+                    foreach ($meta->get_formatted($hideprefix) as $meta_key => $formatted_meta) {
+                        $item_meta[] = array(
+                            'key' => $meta_key,
+                            'label' => $formatted_meta['label'],
+                            'value' => $formatted_meta['value'],
+                        );
+                    }
+                }
+
+                $order_data['shipping_lines'][$key]['meta'] = $item_meta;
+            }
+        }
+
+        return $order_data;
+    }
+
 }
