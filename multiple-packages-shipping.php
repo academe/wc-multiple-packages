@@ -2,7 +2,7 @@
 /*
 Plugin Name: Multiple Packages Configuration for WooCommerce
 Plugin URI: https://github.com/academe/wc-multiple-packages
-Description: Configure product grouping for shipping packages.
+Description: Configure product grouping for shipping packages for WooCommerce.
 Author: Jason Judge jason@academe.co.uk
 Author: Erica Dion erica@bolderelements.net
 Author URI: https://github.com/judgej
