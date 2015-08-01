@@ -75,6 +75,7 @@ TBC
 * Change of name for consistency with wordpress.org slug.
 * Added link to github project page.
 * Added experimental composer.json file.
+* Fixed "enabled" flag on shipping settings overview page.
 
 = 1.2.0 =
 * Issue #1: change order line shipping link fields to hidden fields.

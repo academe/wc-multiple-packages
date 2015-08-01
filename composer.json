@@ -1,0 +1,19 @@
+{
+	"name": "academe/packages-configuration-for-woocommerce",
+	"description": "Configure how products are grouped into shipping packages for WooCommerce.",
+	"keywords": ["wordpress", "plugin", "woocommerce", "shipping", "packages"],
+	"homepage": "https://github.com/academe/wc-multiple-packages",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Jason Judge",
+			"email": "jason@academe.co.uk",
+			"homepage": "https://academe.co.uk"
+		}
+	],
+	"type": "wordpress-plugin",
+	"require": {
+		"php": ">=5.3.2",
+		"composer/installers": "v1.0.6"
+	}
+}
