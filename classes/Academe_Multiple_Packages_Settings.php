@@ -7,7 +7,7 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
         $this->id = 'academe_multiple_packages';
 
         // Title shown in admin
-        $this->method_title = __('Package Grouping');
+        $this->method_title = __('Packages Grouping');
 
         // Description shown in admin
         $this->method_description = __('Group products in an order into shipping packages');
@@ -92,35 +92,37 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
         $shipping_classes = $this->get_shipping_classes();
 
         $settings = apply_filters('woocommerce_multi_packages_settings', array(
-            'multi_packages_options' => array(
-                'id'    => 'multi_packages_options',
-                'type'  => 'title',
-                'title' => __('Multiple Packages for Shipping', 'woocommerce'),
-                'desc'  => __('Separate your customer\'s shopping cart into groups or per product to display multiple shipping select boxes', 'woocommerce'),
-            ),
-
-            'multi_packages_enabled' => array(
-                'id'        => 'multi_packages_enabled',
+            'enabled' => array(
                 'type'      => 'checkbox',
-                'title'     => __('Enable Package Grouping', 'bolder-multi-package-woo'),
+                'title'     => __('Enable Package Grouping', 'academe-package-config-woo'),
                 'default'   => 'yes',
-                'desc'      => __('Enable Multiple Shipping Packages', 'bolder-multi-package-woo'),
+                'desc'      => __('Enable Multiple Shipping Packages', 'academe-package-config-woo'),
             ),
 
-            'multi_packages_type' => array(
-                'id'        => 'multi_packages_type',
+            /*
+            // The title is not used anywhere, as this is not a distinct shipping method.
+            'title' => array(
+                'title'         => __('Method Title', 'academe-package-config-woo'),
+                'type'          => 'text',
+                'description'   => __('This controls the title which the user sees during checkout.', 'academe-package-config-woo'),
+                'default'       => __('Packages Grouping', 'academe-package-config-woo'),
+                'desc_tip'      => true
+            ),
+            */
+
+            'type' => array(
                 'type'      => 'select',
-                'title'     => __('Group By', 'bolder-multi-package-woo'),
-                'desc'      => __('How packages are defined, in groups or per product', 'bolder-multi-package-woo'),
+                'title'     => __('Group By', 'academe-package-config-woo'),
+                'desc'      => __('How packages are defined, in groups or per product', 'academe-package-config-woo'),
                 'default'   => 'shipping-class',
                 'class'     => 'chosen_select',
                 'desc_tip'  => true,
                 'options'   => array(
-                    'shipping-class' => __('Shipping Class', 'bolder-multi-package-woo'),
-                    'per-product' => __('Product (individual)', 'bolder-multi-package-woo'),
-                    'per-owner' => __('Product Owner (vendor)', 'bolder-multi-package-woo'),
-                    'product-meta' => __('Custom Product Field', 'bolder-multi-package-woo'),
-                    'product-meta_printtrail_package' => __('Printtrail Package Names', 'bolder-multi-package-woo'),
+                    'shipping-class' => __('Shipping Class', 'academe-package-config-woo'),
+                    'per-product' => __('Product (individual)', 'academe-package-config-woo'),
+                    'per-owner' => __('Product Owner (vendor)', 'academe-package-config-woo'),
+                    'product-meta' => __('Custom Product Field', 'academe-package-config-woo'),
+                    'product-meta_printtrail_package' => __('Printtrail Package Names', 'academe-package-config-woo'),
                 ),
             ),
 
@@ -128,29 +130,27 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
             // It should be a valid metafield key. The documentation is
             // silent on what is "valid", but all examples seem to be
             // lower-case ASCII with underscores for spaces.
-            'multi_packages_meta_field' => array(
-                'id'        => 'multi_packages_meta_field',
+            'meta_field' => array(
                 'type'      => 'text',
                 'class'     => '',
                 'css'       => 'min-width:300px;',
-                'title'     => __('Custom Field to Group By', 'bolder-multi-package-woo'),
-                'desc'  => '<em>' . __('Custom product field key', 'bolder-multi-package-woo') . '</em>',
-                'default'   => __('', 'bolder-multi-package-woo'),
-                'desc_tip'  => __('The custom product meta field name (key) used to group the products into shipping packages.', 'bolder-multi-package-woo'),
+                'title'     => __('Custom Field to Group By', 'academe-package-config-woo'),
+                'desc'  => '<em>' . __('Custom product field key', 'academe-package-config-woo') . '</em>',
+                'default'   => __('', 'academe-package-config-woo'),
+                'desc_tip'  => __('The custom product meta field name (key) used to group the products into shipping packages.', 'academe-package-config-woo'),
             ),
 
-            'multi_packages_free_shipping' => array(
-                'id'        => 'multi_packages_free_shipping',
+            'free_shipping' => array(
                 'type'      => 'multiselect',
                 'class'     => 'chosen_select',
-                'title'     => __('Free Shipping Classes', 'bolder-multi-package-woo'),
-                'desc'      => '<em>' . __('\'Free_Shipping\' method must be enabled', 'bolder-multi-package-woo') . '</em>',
-                'default'   => __('Let me know when this item is back in stock!', 'bolder-multi-package-woo'),
-                'desc_tip'  => __('Exclude the selected shipping classes from being charged shipping', 'bolder-multi-package-woo'),
+                'title'     => __('Free Shipping Classes', 'academe-package-config-woo'),
+                'desc'      => '<em>' . __('\'Free_Shipping\' method must be enabled', 'academe-package-config-woo') . '</em>',
+                'default'   => __('Let me know when this item is back in stock!', 'academe-package-config-woo'),
+                'desc_tip'  => __('Exclude the selected shipping classes from being charged shipping', 'academe-package-config-woo'),
                 'options'   => $shipping_classes,
             ),
 
-            'multi_packages_method_settings' => array(
+            'method_settings' => array(
                 'id'        => 'multi_packages_method_settings',
                 'type'      => 'title',
                 'title'     => __('Shipping Method Restrictions When Grouping by Class', 'woocommerce'),
@@ -158,7 +158,6 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
             ),
 
             'shipping_restrictions_classes' => array(
-                'id'        => 'shipping_restrictions_classes',
                 'type'      => 'shipping_restrictions_classes',
             ),
         ));

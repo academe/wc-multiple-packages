@@ -38,21 +38,21 @@ class Academe_Multiple_Packages
         );
 
         // Extract some of the settings we will need.
-        $this->enabled = !empty($settings['multi_packages_enabled']);
+        $this->enabled = !empty($settings['enabled']);
 
         $this->multi_packages_free_shipping =
-            isset($settings['multi_packages_free_shipping'])
-            ? $settings['multi_packages_free_shipping']
+            isset($settings['free_shipping'])
+            ? $settings['free_shipping']
             : '';
 
         $this->multi_packages_type =
-            isset($settings['multi_packages_type'])
-            ? $settings['multi_packages_type']
+            isset($settings['type'])
+            ? $settings['type']
             : '';
 
         $this->multi_packages_meta_field =
-            isset($settings['multi_packages_meta_field'])
-            ? $settings['multi_packages_meta_field']
+            isset($settings['meta_field'])
+            ? $settings['meta_field']
             : '';
 
         $this->shipping_restrictions_classes =

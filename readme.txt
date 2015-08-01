@@ -4,7 +4,7 @@ Donate link:
 Tags: woocommerce, shipping, packages
 Requires at least: 3.8
 Tested up to: 4.2.2
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,15 +29,23 @@ This plugin is designed as a simplistic UI for users who want to ship their cart
 The actual functionality of multiple shipping options is provided through WooCommerce 2.1+ but it has no 
 GUI out-of-the-box.
 
+The project is maintained on github, and issues are tracked there:
+
+<https://github.com/academe/wc-multiple-packages>
+
+The plugin can be downloaded from wordpress.org here:
+
+<https://wordpress.org/plugins/packages-configuration-for-woocommerce/>
+
 == Installation ==
 
-<h4>Minimum Requirements</h4>
+= Minimum Requirements =
 
 * WooCommerce 2.1 or greater
 * WordPress 3.8 or greater
 * PHP version 5.3 or greater
 
-<h4>Installation through FTP</h4>
+= Installation through FTP =
 
 1. Upload the entire `wc-multiple-packages` folder to the `wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
@@ -59,13 +67,14 @@ meta fields for the shipping lines.
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets 
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png` 
-(or jpg, jpeg, gif).
-2. This is the second screen shot
+TBC
 
 == Changelog ==
+
+= 1.2.1 =
+* Change of name for consistency with wordpress.org slug.
+* Added link to github project page.
+* Added experimental composer.json file.
 
 = 1.2.0 =
 * Issue #1: change order line shipping link fields to hidden fields.

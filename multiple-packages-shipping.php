@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: Multiple Packages Configuration for WooCommerce
+Plugin Name: Packages Configuration for WooCommerce
 Plugin URI: https://github.com/academe/wc-multiple-packages
-Description: Configure product grouping for shipping packages for WooCommerce.
+Description: Configure how products are grouped into shipping packages for WooCommerce.
 Author: Jason Judge jason@academe.co.uk
 Author: Erica Dion erica@bolderelements.net
 Author URI: https://github.com/judgej
 Author URI: http://www.bolderelements.net/
-Version: 1.2.0
+Version: 1.2.1
 
 Copyright: © 2014 Bolder Elements, © 2015 Academe Computing
 License: GPLv2 or later
@@ -67,6 +67,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
         /**
          * Add the shipping method to the WC list of methods.
+         * It is not strictly a shipping method itself, but a tool for grouping other
+         * shipping methods.
          */
         function academe_add_wc_multiple_packages($methods)
         {
