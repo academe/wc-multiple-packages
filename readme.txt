@@ -1,5 +1,5 @@
 === Plugin Name ===
-Contributors: hystericallyme, judgej
+Contributors: judgej, hystericallyme
 Donate link: 
 Tags: woocommerce, shipping, packages
 Requires at least: 3.8
