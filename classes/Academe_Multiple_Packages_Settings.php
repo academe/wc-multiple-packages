@@ -7,10 +7,10 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
         $this->id = 'academe_multiple_packages';
 
         // Title shown in admin
-        $this->method_title = __('Packages Grouping');
+        $this->method_title = __('Packages Grouping', 'academe-package-config-woo');
 
         // Description shown in admin
-        $this->method_description = __('Group products in an order into shipping packages');
+        $this->method_description = __('Group products in an order into shipping packages', 'academe-package-config-woo');
 
         $this->init();
     }
