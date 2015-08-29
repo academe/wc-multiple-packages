@@ -4,10 +4,9 @@ Plugin Name: Packages Configuration for WooCommerce
 Plugin URI: https://github.com/academe/wc-multiple-packages
 Description: Configure how products are grouped into shipping packages for WooCommerce.
 Author: Jason Judge jason@academe.co.uk
-Author: Erica Dion erica@bolderelements.net
+Original Plugin Author: Erica Dion erica@bolderelements.net (http://www.bolderelements.net/)
 Author URI: https://github.com/judgej
-Author URI: http://www.bolderelements.net/
-Version: 1.2.1
+Version: 1.2.2
 
 Copyright: © 2014 Bolder Elements, © 2015 Academe Computing
 License: GPLv2 or later

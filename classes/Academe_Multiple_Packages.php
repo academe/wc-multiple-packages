@@ -175,6 +175,7 @@ class Academe_Multiple_Packages
                 }
             } elseif ($multi_packages_type == 'shipping-class') {
                 // FIXME: move these $$ variables into arrays to help debugging.
+                // This is legacy code that needs a good refactor or rewrite.
                 // This section seems to be more complicated than it needs to be,
                 // just because it tries to keep the index of the packages numeric
                 // right the way through, rather than just make them numeric at the
@@ -241,7 +242,7 @@ class Academe_Multiple_Packages
                 }
             } elseif (substr($multi_packages_type, 0, strlen($product_meta_prefix)) == $product_meta_prefix) {
                 // Get the metafield name.
-                // It can come from the setting in th eplugin admin page, or
+                // It can come from the setting in the plugin admin page, or
                 // from the package name field, as a suffix.
                 //
                 // We hope it is lower-case and with underscores, as that is
@@ -274,8 +275,6 @@ class Academe_Multiple_Packages
                     }
                 }
             } elseif ($multi_packages_type == 'per-owner') {
-                // FIXME: this is 90% duplicated from the previous grouping
-                // option. Do some refactoring.
                 // Go over the items in the cart to get the package names.
                 foreach ( WC()->cart->get_cart() as $item ) {
                     if ( $item['data']->needs_shipping() ) {
@@ -301,15 +300,20 @@ class Academe_Multiple_Packages
     /**
      * Create a new package if it does not already exist.
      * The package_id is a string or number - whatever they are grouped by.
+     * It may be useful to add other metadata to the package for use in
+     * the templates that display the order details. By default those templates
+     * list the packages as "Shipping #N", which means nothing to the customer.
+     * If it were able to describe a package as "Heavy Items" or "Signed-for Required"
+     * then that would be more meaningful.
      */
     function check_create_package($package_id)
     {
-        // Has this package name been encountered already?
+        // Has this package ID been encountered already?
 
         if (!isset($this->packages[$package_id])) {
-            // No - so create it.
+            // Does not exist - create it.
             $this->packages[$package_id] = array(
-                // contents is the array of products in the group.
+                // 'contents' is the array of products in the package.
                 'contents' => array(),
                 'contents_cost' => 0,
                 'applied_coupons' => WC()->cart->applied_coupons,

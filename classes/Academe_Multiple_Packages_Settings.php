@@ -2,6 +2,8 @@
 
 class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
 {
+    protected $current_dir;
+
     public function __construct()
     {
         $this->id = 'academe_multiple_packages';
@@ -9,8 +11,14 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
         // Title shown in admin
         $this->method_title = __('Packages Grouping');
 
+        // Issue #10 "title" is used in the Shipping Methods table.
+        $this->title = $this->method_title;
+
         // Description shown in admin
         $this->method_description = __('Group products in an order into shipping packages');
+
+        // Set the current directory.
+        $this->current_dir = dirname(__FILE__);
 
         $this->init();
     }
@@ -122,7 +130,8 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
                     'per-product' => __('Product (individual)', 'academe-package-config-woo'),
                     'per-owner' => __('Product Owner (vendor)', 'academe-package-config-woo'),
                     'product-meta' => __('Custom Product Field', 'academe-package-config-woo'),
-                    'product-meta_printtrail_package' => __('Printtrail Package Names', 'academe-package-config-woo'),
+                    // Removed for now, while some details of Print Trail get ironed out.
+                    //'product-meta_printtrail_package' => __('Printtrail Package Names', 'academe-package-config-woo'),
                 ),
             ),
 
@@ -192,7 +201,7 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
         $shipping_methods = WC()->shipping->load_shipping_methods();
         $total_shipping_methods = count($shipping_methods) + 1;
 
-        include(dirname(__FILE__) . '/../views/shipping_class_method_restrictions.php');
+        include($this->current_dir . '/../views/shipping_class_method_restrictions.php');
     }
 
     public function save_shipping_class_method_restrictions($current_section = '')

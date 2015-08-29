@@ -1,10 +1,10 @@
 === Plugin Name ===
-Contributors: judgej, hystericallyme
+Contributors: judgej
 Donate link: 
 Tags: woocommerce, shipping, packages
 Requires at least: 3.8
-Tested up to: 4.2.2
-Stable tag: 1.2.1
+Tested up to: 4.3.0
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,8 @@ The project is maintained on github, and issues are tracked there:
 The plugin can be downloaded from wordpress.org here:
 
 <https://wordpress.org/plugins/packages-configuration-for-woocommerce/>
+
+Banner Photo: "Container" by Izabela Reimers via Flickr Creative Commons
 
 == Installation ==
 
@@ -71,6 +73,11 @@ TBC
 
 == Changelog ==
 
+= 1.2.2 =
+
+* hystericallyme removed from contributers as it appears to be an official collaboration, which wasn't the intention.
+* Issue #10 fix.
+
 = 1.2.1 =
 * Change of name for consistency with wordpress.org slug.
 * Added link to github project page.
@@ -82,7 +89,7 @@ TBC
 
 = 1.1.1 =
 * Refactor to use (eager-loading) singletons.
-* Only load settings class whwn in admin area.
+* Only load settings class when in admin area.
 
 = 1.1.0 =
 * PHP fixes
@@ -92,3 +99,8 @@ TBC
 * Initial Release
 
 == Upgrade Notice ==
+
+When moving from 1.2.0 to 1.2.1 you may need to resave the settings for this plugin.
+Some of the stored settings have changed their name, and so those settings will need
+to be reentered. Appologies for the patch-only version upgrade on this.
+
