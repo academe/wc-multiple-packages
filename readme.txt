@@ -74,7 +74,8 @@ TBC
 == Changelog ==
 
 = 1.2.x =
-* Issue #9 Checkout features not disabled when the shipping method was disabled.
+* Issue #9 Checkout packages not disabled when the shipping method was disabled.
+* Issue #11 Refactoring of the shipping class rules; functionally remains the same.
 
 * hystericallyme removed from contributers as it appears to be an official collaboration, which wasn't the intention.
 = 1.2.2 =

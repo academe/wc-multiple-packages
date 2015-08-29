@@ -159,28 +159,19 @@ class Academe_Multiple_Packages
                 $n = 0;
                 foreach ( WC()->cart->get_cart() as $item ) {
                     if ( $item['data']->needs_shipping() ) {
-                        // Put inside packages
-                        $this->packages[$n] = array(
-                            'contents' => array($item),
-                            'contents_cost' => array_sum(wp_list_pluck(array($item), 'line_total')),
-                            'applied_coupons' => WC()->cart->applied_coupons,
-                            'destination' => array(
-                                'country' => WC()->customer->get_shipping_country(),
-                                'state' => WC()->customer->get_shipping_state(),
-                                'postcode' => WC()->customer->get_shipping_postcode(),
-                                'city' => WC()->customer->get_shipping_city(),
-                                'address' => WC()->customer->get_shipping_address(),
-                                'address_2' => WC()->customer->get_shipping_address_2()
-                            )
-                        );
-
                         // Determine if 'ship_via' applies
                         $key = $item['data']->get_shipping_class_id();
-                        if( $free_classes && in_array( $key, $free_classes ) ) {
-                            $this->packages[$n]['ship_via'] = array('free_shipping');
+                        if ($free_classes && in_array($key, $free_classes)) {
+                            $package_meta = array('ship_via' => array('free_shipping'));
                         } elseif (count($package_restrictions) && isset($package_restrictions[$key])) {
-                            $this->packages[$n]['ship_via'] = $package_restrictions[$key];
+                            $package_meta = array('ship_via' => $package_restrictions[$key]);
+                        } else {
+                            $package_meta = array();
                         }
+
+                        // Put inside package.
+                        $this->package_add_item($n, $item, $package_meta);
+
                         $n++;
                     }
                 }
