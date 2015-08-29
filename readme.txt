@@ -4,7 +4,7 @@ Donate link:
 Tags: woocommerce, shipping, packages
 Requires at least: 3.8
 Tested up to: 4.3.0
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,9 +73,10 @@ TBC
 
 == Changelog ==
 
-= 1.2.x =
+= 1.2.3 =
 * Issue #9 Checkout packages not disabled when the shipping method was disabled.
-* Issue #11 Refactoring of the shipping class rules; functionally remains the same.
+* Issue #11 Refactoring of the shipping class and individual product rules; functionally remains the same.
+* Issue #12 Additional package metadata to help with theming; docs and examples to come later.
 
 * hystericallyme removed from contributers as it appears to be an official collaboration, which wasn't the intention.
 = 1.2.2 =
