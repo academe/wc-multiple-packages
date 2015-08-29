@@ -154,6 +154,8 @@ class Academe_Multiple_Packages
             // Per product grouping.
             //
 
+            $package_meta = array('package_grouping_rule' => $multi_packages_type);
+
             if ($multi_packages_type == 'per-product') {
                 // separate each item into a package
                 $n = 0;
@@ -161,13 +163,15 @@ class Academe_Multiple_Packages
                     if ( $item['data']->needs_shipping() ) {
                         // Determine if 'ship_via' applies
                         $key = $item['data']->get_shipping_class_id();
+
+
                         if ($free_classes && in_array($key, $free_classes)) {
-                            $package_meta = array('ship_via' => array('free_shipping'));
+                            $package_meta['ship_via'] = array('free_shipping');
                         } elseif (count($package_restrictions) && isset($package_restrictions[$key])) {
-                            $package_meta = array('ship_via' => $package_restrictions[$key]);
-                        } else {
-                            $package_meta = array();
+                            $package_meta['ship_via'] = $package_restrictions[$key];
                         }
+
+                        $package_meta['package_grouping_value'] = $item->id;
 
                         // Put inside package.
                         $this->package_add_item($n, $item, $package_meta);
@@ -213,7 +217,6 @@ class Academe_Multiple_Packages
 
                     $shipping_class_term_id = (int)$shipping_class_slugs[$item_shipping_class];
 
-                    $package_meta = array();
                     if ($free_classes && in_array($shipping_class_term_id, $free_classes)) {
                         // The shipping class is one in the list of "free shipping" classes in
                         // the plugin settings.
@@ -227,6 +230,8 @@ class Academe_Multiple_Packages
 
                         $package_meta['ship_via'] = $package_restrictions[$shipping_class_term_id];
                     }
+
+                    $package_meta['package_grouping_value'] = $item_shipping_class;
 
                     $this->package_add_item($item_shipping_class, $item, $package_meta);
                 }
@@ -266,8 +271,9 @@ class Academe_Multiple_Packages
                         $product_id = $item['product_id'];
 
                         $meta_value = get_post_meta($product_id, $meta_field_name, true);
+                        $package_meta['package_grouping_value'] = $meta_value;
 
-                        $this->package_add_item($meta_value, $item);
+                        $this->package_add_item($meta_value, $item, $package_meta);
                     }
                 }
             }
@@ -288,7 +294,9 @@ class Academe_Multiple_Packages
                             $post_author = '-1';
                         }
 
-                        $this->package_add_item($post_author, $item);
+                        $package_meta['package_grouping_value'] = $post_author;
+
+                        $this->package_add_item($post_author, $item, $package_meta);
                     }
                 }
             }
