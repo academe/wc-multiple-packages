@@ -107,17 +107,6 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
                 'desc'      => __('Enable Multiple Shipping Packages', 'academe-package-config-woo'),
             ),
 
-            /*
-            // The title is not used anywhere, as this is not a distinct shipping method.
-            'title' => array(
-                'title'         => __('Method Title', 'academe-package-config-woo'),
-                'type'          => 'text',
-                'description'   => __('This controls the title which the user sees during checkout.', 'academe-package-config-woo'),
-                'default'       => __('Packages Grouping', 'academe-package-config-woo'),
-                'desc_tip'      => true
-            ),
-            */
-
             'type' => array(
                 'type'      => 'select',
                 'title'     => __('Group By', 'academe-package-config-woo'),

@@ -126,7 +126,8 @@ class Academe_Multiple_Packages
     }
 
     /**
-     * Get Settings for Restrictions Table
+     * Get Settings for Restrictions Table.
+     * Called directly from the woocommerce_cart_shipping_packages filter.
      *
      * @access public
      * @return void
@@ -148,6 +149,11 @@ class Academe_Multiple_Packages
 
             // Determine Type of Grouping
             $multi_packages_type = $this->multi_packages_type;
+
+            //
+            // Per product grouping.
+            //
+
             if ($multi_packages_type == 'per-product') {
                 // separate each item into a package
                 $n = 0;
@@ -178,79 +184,73 @@ class Academe_Multiple_Packages
                         $n++;
                     }
                 }
-            } elseif ($multi_packages_type == 'shipping-class') {
-                // FIXME: move these $$ variables into arrays to help debugging.
-                // This is legacy code that needs a good refactor or rewrite.
-                // This section seems to be more complicated than it needs to be,
-                // just because it tries to keep the index of the packages numeric
-                // right the way through, rather than just make them numeric at the
-                // end. It could be simplified a lot.
-                // Create arrays for each shipping class
-                $shipping_classes = array();
-                $other = array();
+            }
 
-                $get_classes = WC()->shipping->get_shipping_classes();
-                foreach ( $get_classes as $key => $class ) {
-                    $shipping_classes[ $class->term_id ] = $class->slug;
-                    $array_name = $class->slug;
-                    $$array_name = array();
+            //
+            // Shipping class grouping.
+            //
+
+            elseif ($multi_packages_type == 'shipping-class') {
+                // Get array of shipping classes.
+                $shipping_classes = WC()->shipping->get_shipping_classes();
+
+                // Get a list of shipping class slugs.
+                // The value of each element is the shipping class term ID.
+                $shipping_class_slugs = array('other' => -1);
+                foreach($shipping_classes as $key => $value) {
+                    $shipping_class_slugs[$value->slug] = $value->term_id;
                 }
-                $shipping_classes['misc'] = 'other';
 
-                // Group packages by shipping class (e.g. sort bulky from regular)
-                foreach ( WC()->cart->get_cart() as $item ) {
-                    if ( $item['data']->needs_shipping() ) {
-                        $item_class = $item['data']->get_shipping_class();
-                        if( isset( $item_class ) && $item_class != '' ) {
-                            foreach ($shipping_classes as $class_id => $class_slug) {
-                                if ( $item_class == $class_slug ) {
-                                    array_push( $$class_slug, $item );
-                                }
-                            }
-                        } else {
-                            $other[] = $item;
-                        }
+                // Go through each item in the cart.
+                foreach (WC()->cart->get_cart() as $item) {
+                    // Skip the item if it does not need shipping.
+                    if ( ! $item['data']->needs_shipping()) continue;
+
+                    $item_shipping_class = $item['data']->get_shipping_class();
+
+                    // If the class is not recognised or not present, then put
+                    // this item into the "other" group.
+                    if ( ! isset($shipping_class_slugs[$item_shipping_class])) {
+                        $item_shipping_class = 'other';
                     }
-                }
 
-                // Put inside packages
-                $n = 0;
-                foreach ($shipping_classes as $key => $value) {
-                    if ( count( $$value ) ) {
-                        // Custom elements can be added to this array and be displayed
-                        // in template cart/cart-shipping.php for additional information
-                        // or context.
+                    // Determine if 'ship_via' applies
+                    // $free_classes is an array of term IDs for the classes that have been
+                    // set as "free" in the settings page.
+                    // The "ship via" setting on the package seems to provide an additional
+                    // filter that restricts what shipping methods can be used in that package.
 
-                        $this->packages[$n] = array(
-                            // contents is the array of products in the group.
-                            'contents' => $$value,
-                            'contents_cost' => array_sum( wp_list_pluck( $$value, 'line_total' ) ),
-                            'applied_coupons' => WC()->cart->applied_coupons,
-                            'destination' => array(
-                                'country' => WC()->customer->get_shipping_country(),
-                                'state' => WC()->customer->get_shipping_state(),
-                                'postcode' => WC()->customer->get_shipping_postcode(),
-                                'city' => WC()->customer->get_shipping_city(),
-                                'address' => WC()->customer->get_shipping_address(),
-                                'address_2' => WC()->customer->get_shipping_address_2()
-                            )
-                        );
+                    $shipping_class_term_id = (int)$shipping_class_slugs[$item_shipping_class];
 
-                        // Determine if 'ship_via' applies
-                        if ( $free_classes && in_array( $key, $free_classes ) ) {
-                            $this->packages[$n]['ship_via'] = array('free_shipping');
-                        } elseif (count($package_restrictions) && isset($package_restrictions[$key])) {
-                            $this->packages[$n]['ship_via'] = $package_restrictions[$key];
-                        }
-                        $n++;
+                    $package_meta = array();
+                    if ($free_classes && in_array($shipping_class_term_id, $free_classes)) {
+                        // The shipping class is one in the list of "free shipping" classes in
+                        // the plugin settings.
+                        // The "free shipping" method must be enabled for this to work.
+
+                        $package_meta['ship_via'] = array('free_shipping');
+                    } elseif (count($package_restrictions) && isset($package_restrictions[$shipping_class_term_id])) {
+                        // If there are restrictions set in the class/shipping method settings table
+                        // for this shipping class, then set the selected methods in that table as the
+                        // "ship via" filter. This will be an array of shipping method slugs.
+
+                        $package_meta['ship_via'] = $package_restrictions[$shipping_class_term_id];
                     }
+
+                    $this->package_add_item($item_shipping_class, $item, $package_meta);
                 }
-            } elseif (substr($multi_packages_type, 0, strlen($product_meta_prefix)) == $product_meta_prefix) {
+            }
+
+            //
+            // Product meta field grouping.
+            //
+
+            elseif (substr($multi_packages_type, 0, strlen($product_meta_prefix)) == $product_meta_prefix) {
                 // Get the metafield name.
                 // It can come from the setting in the plugin admin page, or
                 // from the package name field, as a suffix.
                 //
-                // We hope it is lower-case and with underscores, as that is
+                // We hope it is lower-case and with underscores (snake-case), as that is
                 // what most packages seem to use, but the WP documentation is
                 // totally silent on the key format, and in reality anyth string
                 // is accepted.
@@ -279,7 +279,13 @@ class Academe_Multiple_Packages
                         $this->package_add_item($meta_value, $item);
                     }
                 }
-            } elseif ($multi_packages_type == 'per-owner') {
+            }
+
+            //
+            // Owner grouping.
+            //
+
+            elseif ($multi_packages_type == 'per-owner') {
                 // Go over the items in the cart to get the package names.
                 foreach ( WC()->cart->get_cart() as $item ) {
                     if ( $item['data']->needs_shipping() ) {
@@ -296,10 +302,25 @@ class Academe_Multiple_Packages
                 }
             }
 
+            //
+            // Unknown grouping.
+            //
+
+            else {
+                // Use what was supplied.
+                $this->packages = $packages;
+            }
+
             // The packages will be indexed by package name.
-            // We actually want it indexed numerically.
+            // It needs to be indexed numerically and contiguously.
+
             return array_values($this->packages);
         }
+
+        // Fallback - use whatever we already have, possibly generated
+        // by another plugin.
+
+        return $packages;
     }
 
     /**
@@ -311,7 +332,7 @@ class Academe_Multiple_Packages
      * If it were able to describe a package as "Heavy Items" or "Signed-for Required"
      * then that would be more meaningful.
      */
-    function check_create_package($package_id)
+    function check_create_package($package_id, $package_meta = array())
     {
         // Has this package ID been encountered already?
 
@@ -333,15 +354,21 @@ class Academe_Multiple_Packages
                 )
             );
         }
+
+        // Merge in any additional meta data.
+        if ( ! empty($package_meta) && is_array($package_meta)) {
+            $this->packages[$package_id] = array_merge_recursive($this->packages[$package_id], $package_meta);
+        }
     }
 
     /**
      * Add an item to a package.
+     * $package_meta is an array of additional items to merge into the package data.
      */
-    protected function package_add_item($package_id, $item)
+    protected function package_add_item($package_id, $item, $package_meta = array())
     {
         // Make sure the package exists.
-        $this->check_create_package($package_id);
+        $this->check_create_package($package_id, $package_meta);
 
         // Add the item to the package.
         $this->packages[$package_id]['contents'][] = $item;
