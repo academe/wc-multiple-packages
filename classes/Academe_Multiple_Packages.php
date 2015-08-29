@@ -1,5 +1,9 @@
 <?php
 
+/**
+ *
+ */
+
 class Academe_Multiple_Packages
 {
     // Singleton instance.
@@ -31,14 +35,15 @@ class Academe_Multiple_Packages
     public function __construct()
     {
         // Get the settings from the plugin.
-        // CHEKME: there may be an API for this.
+        // CHECKME: there may be an API for this.
         $settings = get_option(
             'woocommerce_' . $this->id . '_settings',
             array()
         );
 
         // Extract some of the settings we will need.
-        $this->enabled = !empty($settings['enabled']);
+        // Issue #9 The enabled flag is "yes" or "no".
+        $this->enabled = !empty($settings['enabled']) && strtolower($settings['enabled']) == 'yes';
 
         $this->multi_packages_free_shipping =
             isset($settings['free_shipping'])

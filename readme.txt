@@ -73,6 +73,10 @@ TBC
 
 == Changelog ==
 
+= 1.2.x =
+* Issue #9 Checkout features not disabled when the shipping method was disabled.
+
+* hystericallyme removed from contributers as it appears to be an official collaboration, which wasn't the intention.
 = 1.2.2 =
 
 * hystericallyme removed from contributers as it appears to be an official collaboration, which wasn't the intention.
