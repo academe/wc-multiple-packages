@@ -76,7 +76,7 @@ TBC
 = 1.2.2 =
 
 * hystericallyme removed from contributers as it appears to be an official collaboration, which wasn't the intention.
-* Issue #10 fix.
+* Issue #10 fix - thanks to https://github.com/GoTeamScotch
 
 = 1.2.1 =
 * Change of name for consistency with wordpress.org slug.
