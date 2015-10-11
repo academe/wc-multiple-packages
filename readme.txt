@@ -19,15 +19,19 @@ Take advantage of a new feature presented in WooCommerce 2.1 and split your cart
 * product owner (vendor using many WC vendor plugins)
 * on a per product basis.
 
-Each package group will have its own shipping selection under the shipping section of your cart and checkout forms.
+Each package will have its own shipping selection under the shipping section of your cart and checkout forms,
+to the customer can choose a different shipping method for each.
 
 This plugin can limit which shipping methods are used for each package.
 Using the provided table, match each shipping class to its applicable method, or leave it blank to include them all.
-This feature works only for shipping class methods, but is planned to be extended to the meta field method.
 
 This plugin is designed as a simplistic UI for users who want to ship their cart items in separate packages.
 The actual functionality of multiple shipping options is provided through WooCommerce 2.1+ but it has no 
 GUI out-of-the-box.
+
+WooCommerce does nto handle the progress of shipping packages beyond the selection of shipping methods in the
+checkout. This plugin does link the order shipping lines and product lines together usign metadata however,
+so custom plugins can make use of those links.
 
 The project is maintained on github, and issues are tracked there:
 
