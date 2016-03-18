@@ -313,7 +313,7 @@ class Academe_Multiple_Packages
 
                         $product_id = $item['product_id'];
 
-                        $meta_value = $item[$meta_field_name];
+                        $meta_value = serialize($item[$meta_field_name]);
 				
                         $package_meta['package_grouping_value'] = $meta_value;
 
