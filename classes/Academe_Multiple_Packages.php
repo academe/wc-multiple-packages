@@ -323,22 +323,8 @@ class Academe_Multiple_Packages
             }
 			
 			elseif ($multi_packages_type == 'per-owner-and-product-meta') {
-                // Get the metafield name.
-                // It can come from the setting in the plugin admin page, or
-                // from the package name field, as a suffix.
-                //
-                // We hope it is lower-case and with underscores (snake-case), as that is
-                // what most packages seem to use, but the WP documentation is
-                // totally silent on the key format, and in reality anyth string
-                // is accepted.
 
-                if ($multi_packages_type == $item_meta_prefix) {
-                    // A custom meta field key.
-                    $meta_field_name = $this->multi_packages_meta_field;
-                } else {
-                    // A pre-defined meta field key.
-                    $meta_field_name = substr($multi_packages_type, strlen($item_meta_prefix));
-                }
+                $meta_field_name = $this->multi_packages_meta_field;
 
                 if (!is_string($meta_field_name) || empty($meta_field_name)) {
                     // If we don't have a string for the field name, then we
@@ -367,29 +353,15 @@ class Academe_Multiple_Packages
             }
 			
 			elseif ($multi_packages_type == 'per-owner-and-item-meta') {
-                // Get the metafield name.
-                // It can come from the setting in the plugin admin page, or
-                // from the package name field, as a suffix.
-                //
-                // We hope it is lower-case and with underscores (snake-case), as that is
-                // what most packages seem to use, but the WP documentation is
-                // totally silent on the key format, and in reality anyth string
-                // is accepted.
-
-                if ($multi_packages_type == $item_meta_prefix) {
-                    // A custom meta field key.
-                    $meta_field_name = $this->multi_packages_meta_field;
-                } else {
-                    // A pre-defined meta field key.
-                    $meta_field_name = substr($multi_packages_type, strlen($item_meta_prefix));
-                }
+                
+				$meta_field_name = $this->multi_packages_meta_field;
 
                 if (!is_string($meta_field_name) || empty($meta_field_name)) {
                     // If we don't have a string for the field name, then we
                     // can't move forward.
                     return $this->packages;
                 }
-
+				
                 // Go over the items in the cart to get the package names.
                 foreach ( WC()->cart->get_cart() as $item ) {
                     if ( $item['data']->needs_shipping() ) {
@@ -401,9 +373,9 @@ class Academe_Multiple_Packages
                         } else {
                             $post_author = '-1';
                         }
-						
+
                         $meta_value = $post_author . serialize($item[$meta_field_name]);
-				
+
                         $package_meta['package_grouping_value'] = $meta_value;
 
                         $this->package_add_item($meta_value, $item, $package_meta);
