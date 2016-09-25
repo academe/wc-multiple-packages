@@ -13,10 +13,17 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
+if (is_multisite()) {
+    $activePlugins = get_site_option('active_sitewide_plugins', array());
+    $activePlugins = array_keys($activePlugins);
+} else {
+    $activePlugins = apply_filters('active_plugins', get_option('active_plugins'));
+}
+
 /**
  * Check if WooCommerce is active.
  */
-if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+if (in_array('woocommerce/woocommerce.php', $activePlugins)) {
 
     if (!class_exists('Academe_Multiple_Packages')) {
         // Include the main class.
