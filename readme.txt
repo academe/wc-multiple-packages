@@ -78,7 +78,6 @@ TBC
 * Issue #11 Refactoring of the shipping class and individual product rules; functionally remains the same.
 * Issue #12 Additional package metadata to help with theming; docs and examples to come later.
 
-* hystericallyme removed from contributers as it appears to be an official collaboration, which wasn't the intention.
 = 1.2.2 =
 
 * hystericallyme removed from contributers as it appears to be an official collaboration, which wasn't the intention.

@@ -164,7 +164,6 @@ class Academe_Multiple_Packages
                         // Determine if 'ship_via' applies
                         $key = $item['data']->get_shipping_class_id();
 
-
                         if ($free_classes && in_array($key, $free_classes)) {
                             $package_meta['ship_via'] = array('free_shipping');
                         } elseif (count($package_restrictions) && isset($package_restrictions[$key])) {
@@ -383,7 +382,6 @@ class Academe_Multiple_Packages
     {
         if (!empty($order_data['shipping_lines'])) {
             $shipping_methods = $order->get_shipping_methods();
-            //mail('jason@consil.co.uk', 'shipping methods', print_r($shipping_methods, true));
 
             foreach($order_data['shipping_lines'] as $key => $shipping_line) {
                 $shipping_line_id = $shipping_line['id'];
