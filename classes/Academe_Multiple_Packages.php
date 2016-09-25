@@ -68,7 +68,7 @@ class Academe_Multiple_Packages
 
     // Create a new singleton instance.
     public static function get_instance() {
-        if (!self::$instance) {
+        if (! self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -90,7 +90,7 @@ class Academe_Multiple_Packages
     {
         $packages = WC()->shipping->get_packages();
 
-        if (!isset($packages[$package_key])) {
+        if (! isset($packages[$package_key])) {
             return;
         }
 
@@ -98,7 +98,7 @@ class Academe_Multiple_Packages
 
         $product_ids = array();
         foreach($package['contents'] as $product) {
-            if (!in_array($product['product_id'], $product_ids)) {
+            if (! in_array($product['product_id'], $product_ids)) {
                 $product_ids[] = $product['product_id'];
             }
         }
@@ -146,7 +146,7 @@ class Academe_Multiple_Packages
 
             //
             $product_meta_prefix = 'product-meta';
-			$item_meta_prefix = 'item-meta';
+            $item_meta_prefix = 'item-meta';
 
             // Determine Type of Grouping
             $multi_packages_type = $this->multi_packages_type;
@@ -161,7 +161,7 @@ class Academe_Multiple_Packages
                 // separate each item into a package
                 $n = 0;
                 foreach ( WC()->cart->get_cart() as $item ) {
-                    if ( $item['data']->needs_shipping() ) {
+                    if ($item['data']->needs_shipping()) {
                         // Determine if 'ship_via' applies
                         $key = $item['data']->get_shipping_class_id();
 
@@ -199,13 +199,13 @@ class Academe_Multiple_Packages
                 // Go through each item in the cart.
                 foreach (WC()->cart->get_cart() as $item) {
                     // Skip the item if it does not need shipping.
-                    if ( ! $item['data']->needs_shipping()) continue;
+                    if (! $item['data']->needs_shipping()) continue;
 
                     $item_shipping_class = $item['data']->get_shipping_class();
 
                     // If the class is not recognised or not present, then put
                     // this item into the "other" group.
-                    if ( ! isset($shipping_class_slugs[$item_shipping_class])) {
+                    if (! isset($shipping_class_slugs[$item_shipping_class])) {
                         $item_shipping_class = 'other';
                     }
 
@@ -259,15 +259,15 @@ class Academe_Multiple_Packages
                     $meta_field_name = substr($multi_packages_type, strlen($product_meta_prefix));
                 }
 
-                if (!is_string($meta_field_name) || empty($meta_field_name)) {
+                if (! is_string($meta_field_name) || empty($meta_field_name)) {
                     // If we don't have a string for the field name, then we
                     // can't move forward.
                     return $this->packages;
                 }
 
                 // Go over the items in the cart to get the package names.
-                foreach ( WC()->cart->get_cart() as $item ) {
-                    if ( $item['data']->needs_shipping() ) {
+                foreach (WC()->cart->get_cart() as $item) {
+                    if ($item['data']->needs_shipping()) {
                         $product_id = $item['product_id'];
 
                         $meta_value = get_post_meta($product_id, $meta_field_name, true);
@@ -278,7 +278,7 @@ class Academe_Multiple_Packages
                 }
             }
 
-			//
+            //
             // Item meta field grouping.
             //
 
@@ -300,32 +300,36 @@ class Academe_Multiple_Packages
                     $meta_field_name = substr($multi_packages_type, strlen($item_meta_prefix));
                 }
 
-                if (!is_string($meta_field_name) || empty($meta_field_name)) {
+                if (! is_string($meta_field_name) || empty($meta_field_name)) {
                     // If we don't have a string for the field name, then we
                     // can't move forward.
                     return $this->packages;
                 }
 
                 // Go over the items in the cart to get the package names.
-                foreach ( WC()->cart->get_cart() as $item ) {
-                    if ( $item['data']->needs_shipping() ) {
+                foreach (WC()->cart->get_cart() as $item) {
+                    if ($item['data']->needs_shipping()) {
 
                         $product_id = $item['product_id'];
 
                         $meta_value = serialize($item[$meta_field_name]);
-				
+
                         $package_meta['package_grouping_value'] = $meta_value;
 
                         $this->package_add_item($meta_value, $item, $package_meta);
                     }
                 }
             }
-			
-			elseif ($multi_packages_type == 'per-owner-and-product-meta') {
+
+            //
+            // Owner and product meta grouping.
+            //
+
+            elseif ($multi_packages_type == 'per-owner-and-product-meta') {
 
                 $meta_field_name = $this->multi_packages_meta_field;
 
-                if (!is_string($meta_field_name) || empty($meta_field_name)) {
+                if (! is_string($meta_field_name) || empty($meta_field_name)) {
                     // If we don't have a string for the field name, then we
                     // can't move forward.
                     return $this->packages;
@@ -333,16 +337,16 @@ class Academe_Multiple_Packages
 
                 // Go over the items in the cart to get the package names.
                 foreach ( WC()->cart->get_cart() as $item ) {
-                    if ( $item['data']->needs_shipping() ) {
+                    if ($item['data']->needs_shipping()) {
 
                         $product_id = $item['product_id'];
 
-						if ( isset( $item['data']->post->post_author ) ) {
+                        if (isset($item['data']->post->post_author)) {
                             $post_author = $item['data']->post->post_author;
                         } else {
                             $post_author = '-1';
                         }
-						
+
                         $meta_value = $post_author . $meta_value = get_post_meta($product_id, $meta_field_name, true);
                         $package_meta['package_grouping_value'] = $meta_value;
 
@@ -350,24 +354,27 @@ class Academe_Multiple_Packages
                     }
                 }
             }
-			
-			elseif ($multi_packages_type == 'per-owner-and-item-meta') {
-                
-				$meta_field_name = $this->multi_packages_meta_field;
 
-                if (!is_string($meta_field_name) || empty($meta_field_name)) {
+            //
+            // Owner and item grouping.
+            //
+
+            elseif ($multi_packages_type == 'per-owner-and-item-meta') {
+                $meta_field_name = $this->multi_packages_meta_field;
+
+                if (!  is_string($meta_field_name) || empty($meta_field_name)) {
                     // If we don't have a string for the field name, then we
                     // can't move forward.
                     return $this->packages;
                 }
-				
+
                 // Go over the items in the cart to get the package names.
-                foreach ( WC()->cart->get_cart() as $item ) {
-                    if ( $item['data']->needs_shipping() ) {
+                foreach ( WC()->cart->get_cart() as $item) {
+                    if ($item['data']->needs_shipping()) {
 
                         $product_id = $item['product_id'];
 
-						if ( isset( $item['data']->post->post_author ) ) {
+                        if (isset( $item['data']->post->post_author ) ) {
                             $post_author = $item['data']->post->post_author;
                         } else {
                             $post_author = '-1';
@@ -389,10 +396,10 @@ class Academe_Multiple_Packages
             elseif ($multi_packages_type == 'per-owner') {
                 // Go over the items in the cart to get the package names.
                 foreach ( WC()->cart->get_cart() as $item ) {
-                    if ( $item['data']->needs_shipping() ) {
+                    if ($item['data']->needs_shipping()) {
                         $product_id = $item['product_id'];
 
-                        if ( isset( $item['data']->post->post_author ) ) {
+                        if (isset( $item['data']->post->post_author)) {
                             $post_author = $item['data']->post->post_author;
                         } else {
                             $post_author = '-1';
@@ -439,7 +446,7 @@ class Academe_Multiple_Packages
     {
         // Has this package ID been encountered already?
 
-        if (!isset($this->packages[$package_id])) {
+        if (! isset($this->packages[$package_id])) {
             // Does not exist - create it.
             $this->packages[$package_id] = array(
                 // 'contents' is the array of products in the package.
@@ -459,7 +466,7 @@ class Academe_Multiple_Packages
         }
 
         // Merge in any additional meta data.
-        if ( ! empty($package_meta) && is_array($package_meta)) {
+        if (! empty($package_meta) && is_array($package_meta)) {
             $this->packages[$package_id] = array_merge_recursive($this->packages[$package_id], $package_meta);
         }
     }
@@ -485,7 +492,7 @@ class Academe_Multiple_Packages
      */
     public static function api_show_shipping_line_meta($order_data, $order, $fields, $server)
     {
-        if (!empty($order_data['shipping_lines'])) {
+        if (! empty($order_data['shipping_lines'])) {
             $shipping_methods = $order->get_shipping_methods();
 
             foreach($order_data['shipping_lines'] as $key => $shipping_line) {
@@ -512,5 +519,4 @@ class Academe_Multiple_Packages
 
         return $order_data;
     }
-
 }

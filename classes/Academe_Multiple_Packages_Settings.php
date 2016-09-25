@@ -119,9 +119,9 @@ class Academe_Multiple_Packages_Settings extends WC_Shipping_Method
                     'per-product' => __('Product (individual)', 'academe-package-config-woo'),
                     'per-owner' => __('Product Owner (vendor)', 'academe-package-config-woo'),
                     'product-meta' => __('Custom Product Field', 'academe-package-config-woo'),
-					'item-meta' => __('Custom Item Field', 'academe-package-config-woo'),
-					'per-owner-and-product-meta' => __('Product Owner (vendor) + Custom Product Field', 'academe-package-config-woo'),
-					'per-owner-and-item-meta' => __('Product Owner (vendor) + Custom Item Field', 'academe-package-config-woo'),
+                    'item-meta' => __('Custom Item Field', 'academe-package-config-woo'),
+                    'per-owner-and-product-meta' => __('Product Owner (vendor) + Custom Product Field', 'academe-package-config-woo'),
+                    'per-owner-and-item-meta' => __('Product Owner (vendor) + Custom Item Field', 'academe-package-config-woo'),
                     // Removed for now, while some details of Print Trail get ironed out.
                     //'product-meta_printtrail_package' => __('Printtrail Package Names', 'academe-package-config-woo'),
                 ),

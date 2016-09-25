@@ -6,7 +6,7 @@ Description: Configure how products are grouped into shipping packages for WooCo
 Author: Jason Judge jason@academe.co.uk
 Original Plugin Author: Erica Dion erica@bolderelements.net (http://www.bolderelements.net/)
 Author URI: https://github.com/judgej
-Version: 1.2.3
+Version: 1.2.5
 
 Copyright: © 2014 Bolder Elements, © 2015 Academe Computing
 License: GPLv2 or later

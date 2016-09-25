@@ -3,8 +3,8 @@ Contributors: judgej
 Donate link: 
 Tags: woocommerce, shipping, packages
 Requires at least: 3.8
-Tested up to: 4.3.0
-Stable tag: 1.2.3
+Tested up to: 4.6.1
+Stable tag: 1.2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,6 +76,13 @@ meta fields for the shipping lines.
 TBC
 
 == Changelog ==
+
+= 1.2.5 =
+* Additional package grouping rules.
+* Now compatible with plugin "Product Delivery Date Pro for WooCommerce".
+
+= 1.2.4 =
+* Support for network-enabled multisite.
 
 = 1.2.3 =
 * Issue #9 Checkout packages not disabled when the shipping method was disabled.
