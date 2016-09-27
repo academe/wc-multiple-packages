@@ -171,7 +171,7 @@ class Academe_Multiple_Packages
                             $package_meta['ship_via'] = $package_restrictions[$key];
                         }
 
-                        $package_meta['package_grouping_value'] = $item->id;
+                        $package_meta['package_grouping_value'] = $item['data']->id;
 
                         // Put inside package.
                         $this->package_add_item($n, $item, $package_meta);
